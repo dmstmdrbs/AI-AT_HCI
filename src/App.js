@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { RecoilRoot } from "recoil";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
 
-function App() {
+import Login from "./pages/Login";
+import Contents from "./pages/Contents";
+
+const GlobalStyle = createGlobalStyle`
+  html, body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    min-width:1280px;
+    height: 100%;
+    *:focus { outline:none; }    
+  }
+`;
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RecoilRoot>
+      <GlobalStyle />
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" exact component={Login}></Route>
+          <Route path="/contents" exact component={Contents}></Route>
+        </Switch>
+      </BrowserRouter>
+    </RecoilRoot>
   );
-}
+};
 
 export default App;
