@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import LoginForm from "../component/LoginForm";
+import LoginForm from '../component/LoginForm';
 
 const Container = styled.div`
   width: 100vw;
@@ -9,6 +9,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgb(225, 230, 236);
 `;
 
 const Login = () => {
