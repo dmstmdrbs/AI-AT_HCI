@@ -11,6 +11,7 @@ import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 //import AttentionImage from '../component/AttentionImage';
 import Explainability from '../component/Explainability';
+import Test from '../component/Test';
 
 const Loading = styled.div`
   width: 100vw;
@@ -119,12 +120,9 @@ const Contents = () => {
   }, []);
 
   useEffect(() => {
-    setTab(0);
-  }, []);
-
-  useEffect(() => {
     console.log(tab);
   }, [tab]);
+
   const logout = () => {
     history.push('/');
   };
@@ -176,6 +174,8 @@ const Contents = () => {
           <Explainability pdi={data[tab]} img={images[tab]}></Explainability>
           <Explainability pdi={data[tab]} img={images[tab]}></Explainability>
         </ExplainabilityContainer>
+
+        <Test />
       </Content>
     </Container>
   );
