@@ -13,14 +13,25 @@ import Button from '@material-ui/core/Button';
 import Explainability from '../component/Explainability';
 import Test from '../component/Test';
 
+import LoadingGif from '../assets/loading.gif';
+
 const Loading = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 28px;
 `;
-
+const Error = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #e74c3c;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -66,7 +77,6 @@ const Contents = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [images, setImages] = useState([]);
   const [tab, setTab] = useState(null);
 
   useEffect(() => {
@@ -90,14 +100,6 @@ const Contents = () => {
           });
 
         setData(pdis);
-
-        const img = await axios.get(`/test/${caseNum}`).then((res) => {
-          return res.data;
-        });
-
-        const prevImg = Array.from(img);
-        prevImg.push(prevImg);
-        setImages(prevImg);
       } catch (e) {
         setError(e);
       }
@@ -139,8 +141,14 @@ const Contents = () => {
     setTab(newValue);
   };
 
-  if (loading) return <Loading>Loading ... </Loading>;
-  if (error) return <Container>Error</Container>;
+  if (loading)
+    return (
+      <Loading>
+        <img src={LoadingGif} alt="Loading..." />
+      </Loading>
+    );
+  if (error) return <Error>Error : API fetching failed</Error>;
+  //   if (error) return <Error>Error : API fetching failed</Error>;
   return (
     <Container>
       <Header>
@@ -171,8 +179,8 @@ const Contents = () => {
           return <p>{JSON.stringify(pdi)}</p>;
         })} */}
         <ExplainabilityContainer>
-          <Explainability pdi={data[tab]} img={images[tab]}></Explainability>
-          <Explainability pdi={data[tab]} img={images[tab]}></Explainability>
+          <Explainability pdi={data[tab]}></Explainability>
+          <Explainability pdi={data[tab]}></Explainability>
         </ExplainabilityContainer>
 
         <Test />
