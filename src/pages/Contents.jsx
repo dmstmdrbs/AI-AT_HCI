@@ -5,14 +5,12 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { nameState } from '../states/therapist';
 
+import { withStyles } from '@material-ui/core/styles';
 //import Paper from '@material-ui/core/Paper';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Button from '@material-ui/core/Button';
+import { Tabs, Tab, Button } from '@material-ui/core';
 //import AttentionImage from '../component/AttentionImage';
 import Explainability from '../component/Explainability';
 import Test from '../component/Test';
-
 import LoadingGif from '../assets/loading.gif';
 
 const Loading = styled.div`
@@ -38,12 +36,15 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  background-color: #f5f5f5;
+  color: #434a54;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
+  background: #e6e9ed;
 `;
+// lightgray : #e6e9ed;
+//
 const Name = styled.div`
   margin-left: 30px;
 `;
@@ -66,6 +67,38 @@ const ExplainabilityContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const StyledTabs = withStyles({
+  indicator: {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    '& > span': {
+      maxWidth: 40,
+      width: '100%',
+      backgroundColor: '#635ee7',
+    },
+  },
+})((props) => <Tabs {...props} TabIndicatorProps={{ children: <span /> }} />);
+
+const StyledTab = withStyles((theme) => ({
+  root: {
+    textTransform: 'none',
+    color: '#fff',
+    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(15),
+    marginRight: theme.spacing(1),
+    '&:focus': {
+      opacity: 1,
+    },
+  },
+}))((props) => <Tab disableRipple {...props} />);
+
+const TabContainer = styled.div`
+  background-color: #4d5e72;
+`;
+// navy-gray : 4d5e72;
+// light-navy : 3f6a8a
 
 axios.defaults.baseURL = 'http://15.164.105.78:8000';
 const CASE_NUM = 6;
@@ -162,17 +195,18 @@ const Contents = () => {
           완료
         </Button>
       </Header>
-      <Tabs
-        value={tab}
-        indicatorColor="primary"
-        textColor="primary"
-        onChange={handleChange}
-        aria-label="disabled tabs example"
-      >
-        {getTabs().map((idx) => {
-          return <Tab key={data[idx - 1]['id']} label={`Case ${idx}`}></Tab>;
-        })}
-      </Tabs>
+      <TabContainer>
+        <StyledTabs
+          value={tab}
+          indicatorColor="secondary"
+          onChange={handleChange}
+          aria-label="disabled tabs example"
+        >
+          {getTabs().map((idx) => {
+            return <StyledTab key={data[idx - 1]['id']} label={`Case ${idx}`}></StyledTab>;
+          })}
+        </StyledTabs>
+      </TabContainer>
 
       <Content>
         {/* {data.map((pdi) => {

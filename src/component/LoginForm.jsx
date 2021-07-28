@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-
+import axios from 'axios';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import { AccountCircle, MailOutlined, Phone } from '@material-ui/icons/';
 import { nameState, phoneState, emailState } from '../states/therapist';
+import hciLogo from '../assets/hci.png';
 
 const Container = styled.div`
   display: flex;
@@ -26,7 +27,9 @@ const Form = styled.div`
   justify-content: center;
 `;
 const InputContainer = styled.div`
-  margin: 10px 10px;
+  display: flex;
+  flex: 1;
+  align-items: center;
 `;
 const Button = styled.button`
   align-self: center;
@@ -41,7 +44,9 @@ const Button = styled.button`
   background-color: #7d95b9;
   cursor: pointer;
 `;
-
+const Logo = styled.img`
+  padding-top: 30px;
+`;
 const LoginForm = () => {
   const history = useHistory();
 
@@ -55,9 +60,22 @@ const LoginForm = () => {
     setEmail('');
   }, []);
 
-  const submit = () => {
+  const submit = async () => {
     if (name && phone && email) {
-      history.push('/contents');
+      await axios
+        .post('http://15.164.105.78:8000/login/', {
+          Name: name,
+          Email: email,
+          Phone: phone,
+        })
+        .then(
+          (res) => {
+            history.push('/contents');
+          },
+          (error) => {
+            console.log(error);
+          },
+        );
     } else {
       alert('정보를 입력해주세요');
     }
@@ -65,7 +83,7 @@ const LoginForm = () => {
 
   return (
     <Container>
-      <h1>정보 입력</h1>
+      <h1>LOGIN</h1>
       <Form>
         <InputContainer>
           <Grid container spacing={3} alignItems="flex-end">
@@ -74,6 +92,7 @@ const LoginForm = () => {
             </Grid>
             <Grid item>
               <TextField
+                fullWidth={true}
                 id="input-name"
                 label="이름"
                 onChange={(e) => {
@@ -90,6 +109,7 @@ const LoginForm = () => {
             </Grid>
             <Grid item>
               <TextField
+                fullWidth={true}
                 id="input-telephone"
                 label="전화번호"
                 onChange={(e) => {
@@ -106,6 +126,7 @@ const LoginForm = () => {
             </Grid>
             <Grid item>
               <TextField
+                fullWidth={true}
                 id="input-email"
                 label="이메일"
                 onChange={(e) => {
@@ -117,6 +138,7 @@ const LoginForm = () => {
         </InputContainer>
       </Form>
       <Button onClick={submit}>확인</Button>
+      <Logo src={hciLogo} alt="logo" />
     </Container>
   );
 };

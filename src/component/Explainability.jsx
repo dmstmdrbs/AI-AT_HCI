@@ -52,7 +52,7 @@ const Explainability = ({ pdi, img }) => {
   return (
     <Container>
       <ImageContainer>
-        <Image src={img} alt="image" />
+        <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="image" />
         {button ? (
           <Button
             variant="outlined"
