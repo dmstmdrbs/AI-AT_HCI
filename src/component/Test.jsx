@@ -136,10 +136,10 @@ const TestImage = ({ name }) => {
   );
 };
 
-const Test = () => {
+const Test = ({ callback }) => {
   const [list, setList] = useState([]);
   const [idList, setIdList] = useState([]);
-
+  let arr = [];
   const onImportExcel = (file) => {
     const { files } = file.target;
     // Read the file through the FileReader object
@@ -160,7 +160,9 @@ const Test = () => {
             // break; // If only the first table is taken, uncomment this line
           }
         }
-        return data;
+        arr = data;
+        console.log(data);
+        callback(data);
         // Finally obtained and formatted json data
       } catch (e) {
         // Relevant prompts for incorrect file type errors can be thrown here

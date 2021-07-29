@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import h337 from 'heatmap.js';
 import PdiResult from './PdiResult';
+import { ControlCameraOutlined } from '@material-ui/icons';
 
 const Container = styled.div`
   padding: 20px;
@@ -21,22 +22,21 @@ const ImageContainer = styled.div`
 `;
 const Image = styled.img`
   width: 100%;
-  max-width: 400px;
-  max-height: 350px;
+  max-width: 512px;
+  max-height: 512px;
   box-shadow: 1px 1px 2px 1px #dadce0;
-  margin-bottom: 10px;
 `;
 const HeatmapContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 400px;
-  height: 350px;
+  width: 512px;
+  height: 512px; ;
 `;
 const OriginalContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 400px;
-  height: 350px;
+  width: 512px;
+  height: 512px; ;
 `;
 const PdiContainer = styled.div`
   overflow-y: scroll;
@@ -53,7 +53,7 @@ const PdiContainer = styled.div`
   }
 `;
 
-const Explainability = ({ pdi, img }) => {
+const Explainability = ({ pdi, pdiIdx, weightList }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(null);
 
@@ -63,43 +63,63 @@ const Explainability = ({ pdi, img }) => {
   }, [pdi]);
 
   useEffect(() => {
+    const strToArray = (str) => {
+      str = str.slice(1, str.length - 1);
+
+      console.log(`parsed : ${str}`);
+      let arr = str.split(', ');
+      console.log(arr);
+      return arr;
+    };
     if (!button) {
-      const setHeatmap = (points) => {
-        console.log('did!');
-        let heatmapInstance = h337.create({
-          // only container is required, the rest will be defaults
-          container: document.querySelector('.heatmap'),
-        });
+      if (clicked === null || clicked === 0 || clicked === 1)
+        console.log('1번과 2번을 제외한 pdi를 선택해주세요');
+      else {
+        const setHeatmap = (points) => {
+          console.log('did!');
+          let heatmapInstance = h337.create({
+            // only container is required, the rest will be defaults
+            container: document.querySelector('.heatmap'),
+          });
 
-        // heatmap data format
-        let data = {
-          max: 10,
-          data: points,
+          // heatmap data format
+          let data = {
+            max: 2,
+            data: points,
+          };
+          console.log(data);
+          // if you have a set of datapoints always use setData instead of addData
+          // for data initialization
+          heatmapInstance.setData(data);
         };
-        // if you have a set of datapoints always use setData instead of addData
-        // for data initialization
-        heatmapInstance.setData(data);
-      };
 
-      let points = [
-        { x: 340, y: 150, value: 5 },
-        { x: 121, y: 150, value: 6 },
-        { x: 100, y: 150, value: 4 },
-        { x: 110, y: 190, value: 3 },
-        { x: 120, y: 200, value: 8 },
-        { x: 300, y: 80, value: 5 },
-        { x: 201, y: 200, value: 4 },
-        { x: 250, y: 180, value: 2 },
-        { x: 310, y: 251, value: 3 },
-        { x: 300, y: 300, value: 2 },
-      ];
+        console.log(`9*pdiIdx+clicked : ${9 * pdiIdx + clicked}`);
+        let pointsTest = weightList[9 * pdiIdx + clicked - 2]['image_att'];
+        console.log(pointsTest);
+        let pointsArray = strToArray(pointsTest);
+        for (let i in pointsArray) {
+          console.log(`pointsArray[${i}] : ${pointsArray[i]}`);
+        }
+        let points = [
+          { x: 128, y: 128, value: pointsArray[0] * 10 },
+          { x: 128, y: 256, value: pointsArray[1] * 10 },
+          { x: 128, y: 384, value: pointsArray[2] * 10 },
+          { x: 256, y: 128, value: pointsArray[3] * 10 },
+          { x: 256, y: 256, value: pointsArray[4] * 10 },
+          { x: 256, y: 384, value: pointsArray[5] * 10 },
+          { x: 384, y: 128, value: pointsArray[6] * 10 },
+          { x: 384, y: 256, value: pointsArray[7] * 10 },
+          { x: 384, y: 384, value: pointsArray[8] * 10 },
+        ];
 
-      setHeatmap(points);
+        setHeatmap(points);
+      }
     }
   }, [button]);
 
   useEffect(() => {
     console.log(clicked);
+    setButton(true);
   }, [clicked]);
 
   const getClickedIdx = (idx) => {
