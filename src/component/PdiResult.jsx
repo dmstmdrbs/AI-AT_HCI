@@ -21,11 +21,11 @@ const PdiContainer = styled.li`
 const ListItem = styled.button`
   border: none;
   margin-bottom: 3px;
-  background-color: ${(props) => (props.clicked === props.idx ? '#000000' : '#ffffff')};
+  background-color: ${(props) => (props.clicked === props.idx ? '#d1d1d1' : '#ffffff')};
   cursor: pointer;
 `;
 
-const PdiResult = ({ pdi }) => {
+const PdiResult = ({ pdi, callback }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
   const [words, setWords] = useState(['좋아요', '않았어요', '기분이', '조금']);
@@ -47,6 +47,10 @@ const PdiResult = ({ pdi }) => {
     setPitrQ(qList);
   }, [pdi]);
 
+  useEffect(() => {
+    console.log(clicked);
+    callback(clicked);
+  }, [clicked]);
   return (
     <Container>
       <PdiList>

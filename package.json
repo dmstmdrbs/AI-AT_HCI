@@ -20,10 +20,12 @@
     "react-scripts": "4.0.3",
     "recoil": "^0.3.1",
     "styled-components": "^5.3.0",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.0.1",
+    "xlsx": "^0.17.0",
+    "xlsx-parse-json": "^3.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set PORT=5000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

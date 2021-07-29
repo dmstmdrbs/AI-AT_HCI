@@ -55,8 +55,10 @@ const PdiContainer = styled.div`
 
 const Explainability = ({ pdi, img }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
+  const [clicked, setClicked] = useState(null);
 
   useEffect(() => {
+    console.log(pdi);
     setButton(true);
   }, [pdi]);
 
@@ -77,8 +79,6 @@ const Explainability = ({ pdi, img }) => {
         // if you have a set of datapoints always use setData instead of addData
         // for data initialization
         heatmapInstance.setData(data);
-
-        // setHeat(true);
       };
 
       let points = [
@@ -94,11 +94,17 @@ const Explainability = ({ pdi, img }) => {
         { x: 300, y: 300, value: 2 },
       ];
 
-      // console.log(points);
-      // console.log(point);
       setHeatmap(points);
     }
   }, [button]);
+
+  useEffect(() => {
+    console.log(clicked);
+  }, [clicked]);
+
+  const getClickedIdx = (idx) => {
+    setClicked(idx);
+  };
 
   return (
     <Container>
@@ -126,7 +132,7 @@ const Explainability = ({ pdi, img }) => {
         </Button>
       </ImageContainer>
       <PdiContainer>
-        <PdiResult pdi={pdi} />
+        <PdiResult pdi={pdi} callback={getClickedIdx} />
       </PdiContainer>
     </Container>
   );
