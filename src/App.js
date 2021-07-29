@@ -1,17 +1,16 @@
-import React from "react";
-import { RecoilRoot } from "recoil";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
+import React from 'react';
+import { RecoilRoot } from 'recoil';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createGlobalStyle } from 'styled-components';
 
-import Login from "./pages/Login";
-import Contents from "./pages/Contents";
+import Login from './pages/Login';
+import Contents from './pages/Contents';
 
 const GlobalStyle = createGlobalStyle`
   html, body {
     margin: 0px;
     padding: 0px;
     width: 100%;
-    min-width:1280px;
     height: 100%;
     *:focus { outline:none; }    
   }
