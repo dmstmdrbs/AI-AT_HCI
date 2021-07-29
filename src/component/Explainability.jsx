@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
-
+import h337 from 'heatmap.js';
 import PdiResult from './PdiResult';
 
 const Container = styled.div`
@@ -26,7 +26,18 @@ const Image = styled.img`
   box-shadow: 1px 1px 2px 1px #dadce0;
   margin-bottom: 10px;
 `;
-
+const HeatmapContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 400px;
+  height: 350px;
+`;
+const OriginalContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 400px;
+  height: 350px;
+`;
 const PdiContainer = styled.div`
   overflow-y: scroll;
   &::-webkit-scrollbar {
@@ -49,29 +60,70 @@ const Explainability = ({ pdi, img }) => {
     setButton(true);
   }, [pdi]);
 
+  useEffect(() => {
+    if (!button) {
+      const setHeatmap = (points) => {
+        console.log('did!');
+        let heatmapInstance = h337.create({
+          // only container is required, the rest will be defaults
+          container: document.querySelector('.heatmap'),
+        });
+
+        // heatmap data format
+        let data = {
+          max: 10,
+          data: points,
+        };
+        // if you have a set of datapoints always use setData instead of addData
+        // for data initialization
+        heatmapInstance.setData(data);
+
+        // setHeat(true);
+      };
+
+      let points = [
+        { x: 340, y: 150, value: 5 },
+        { x: 121, y: 150, value: 6 },
+        { x: 100, y: 150, value: 4 },
+        { x: 110, y: 190, value: 3 },
+        { x: 120, y: 200, value: 8 },
+        { x: 300, y: 80, value: 5 },
+        { x: 201, y: 200, value: 4 },
+        { x: 250, y: 180, value: 2 },
+        { x: 310, y: 251, value: 3 },
+        { x: 300, y: 300, value: 2 },
+      ];
+
+      // console.log(points);
+      // console.log(point);
+      setHeatmap(points);
+    }
+  }, [button]);
+
   return (
     <Container>
       <ImageContainer>
-        <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="image" />
         {button ? (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setButton(!button);
-            }}
-          >
-            Show Heatmap
-          </Button>
+          <>
+            <OriginalContainer>
+              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
+            </OriginalContainer>
+          </>
         ) : (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setButton(!button);
-            }}
-          >
-            Show Original
-          </Button>
+          <>
+            <HeatmapContainer className="heatmap">
+              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+            </HeatmapContainer>
+          </>
         )}
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setButton(!button);
+          }}
+        >
+          {button ? 'Show Heatmap' : 'Show Original'}
+        </Button>
       </ImageContainer>
       <PdiContainer>
         <PdiResult pdi={pdi} />
