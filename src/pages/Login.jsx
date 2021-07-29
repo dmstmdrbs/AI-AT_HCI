@@ -7,9 +7,10 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: rgb(225, 230, 236);
+  background-color: #e6e9ed;
 `;
 
 const Login = () => {
