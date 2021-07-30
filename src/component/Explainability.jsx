@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import h337 from 'heatmap.js';
 import PdiResult from './PdiResult';
-import { ControlCameraOutlined } from '@material-ui/icons';
 
 const Container = styled.div`
   padding: 20px;
@@ -102,13 +101,13 @@ const Explainability = ({ pdi, pdiIdx, weightList }) => {
         }
         let points = [
           { x: 128, y: 128, value: pointsArray[0] * 10 },
-          { x: 128, y: 256, value: pointsArray[1] * 10 },
-          { x: 128, y: 384, value: pointsArray[2] * 10 },
-          { x: 256, y: 128, value: pointsArray[3] * 10 },
+          { x: 256, y: 128, value: pointsArray[1] * 10 },
+          { x: 384, y: 128, value: pointsArray[2] * 10 },
+          { x: 128, y: 256, value: pointsArray[3] * 10 },
           { x: 256, y: 256, value: pointsArray[4] * 10 },
-          { x: 256, y: 384, value: pointsArray[5] * 10 },
-          { x: 384, y: 128, value: pointsArray[6] * 10 },
-          { x: 384, y: 256, value: pointsArray[7] * 10 },
+          { x: 384, y: 256, value: pointsArray[5] * 10 },
+          { x: 128, y: 384, value: pointsArray[6] * 10 },
+          { x: 256, y: 384, value: pointsArray[7] * 10 },
           { x: 384, y: 384, value: pointsArray[8] * 10 },
         ];
 
