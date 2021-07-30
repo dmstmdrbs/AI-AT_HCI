@@ -160,7 +160,7 @@ const Test = ({ callback }) => {
             // break; // If only the first table is taken, uncomment this line
           }
         }
-        arr = data;
+
         console.log(data);
         callback(data);
         // Finally obtained and formatted json data

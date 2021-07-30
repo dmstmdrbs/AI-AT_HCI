@@ -186,7 +186,7 @@ const Contents = () => {
           setData(null);
           console.log(caseNum);
           await axios
-            .get(`/${caseNum}`)
+            .get(`/${caseNum + 1}`)
             .then((res) => {
               const replaceInString = (fullString, search, replacement) => {
                 return fullString.split(search).join(replacement);

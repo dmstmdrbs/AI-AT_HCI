@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 //https://github.com/bvaughn/react-highlight-words
 import Highlighter from 'react-highlight-words';
+import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
@@ -28,7 +29,7 @@ const ListItem = styled.button`
 const PdiResult = ({ pdi, callback }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
-  const [words, setWords] = useState(['좋아요', '않았어요', '기분이', '조금']);
+  const [words, setWords] = useState(['좋아요', '모르겠어요', '기분이', '조금']);
 
   useEffect(() => {
     setClicked(null);
@@ -66,10 +67,11 @@ const PdiResult = ({ pdi, callback }) => {
                   clicked === idx ? setClicked(null) : setClicked(idx);
                 }}
               >
-                <Highlighter
-                  searchWords={words}
-                  autoEscape={true}
-                  textToHighlight={`${item} - ${pdi[item]}`}
+                <MyHiglighter
+                  sentence={`${item} - ${pdi[item]}`}
+                  weight={[
+                    0, 0, 0.1, 0.1, 0.26, 0.5, 0.15, 0.5, 0.65, 0.26, 0.11, 0.21, 0.53, 0.77,
+                  ]}
                 />
               </ListItem>
             </PdiContainer>
