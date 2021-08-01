@@ -1,19 +1,23 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { nameState } from '../states/therapist';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { nameState } from "../states/therapist";
 
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 //import Paper from '@material-ui/core/Paper';
-import { Tabs, Tab, Button } from '@material-ui/core';
+import { Tabs, Tab, Button } from "@material-ui/core";
 //import AttentionImage from '../component/AttentionImage';
-import Explainability from '../component/Explainability';
-import Test from '../component/Test';
-import LoadingGif from '../assets/loading.gif';
+import Explainability from "../component/Explainability";
+import Test from "../component/Test";
+import LoadingGif from "../assets/loading.gif";
 
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
+import {
+  ContactSupportOutlined,
+  InsertCommentTwoTone,
+} from "@material-ui/icons";
 
 const Loading = styled.div`
   width: 100vw;
@@ -72,25 +76,25 @@ const ExplainabilityContainer = styled.div`
 
 const StyledTabs = withStyles({
   indicator: {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    '& > span': {
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    "& > span": {
       maxWidth: 45,
-      width: '100%',
-      backgroundColor: '#fff',
+      width: "100%",
+      backgroundColor: "#fff",
     },
   },
 })((props) => <Tabs {...props} TabIndicatorProps={{ children: <span /> }} />);
 
 const StyledTab = withStyles((theme) => ({
   root: {
-    textTransform: 'none',
-    color: '#fff',
+    textTransform: "none",
+    color: "#fff",
     fontWeight: theme.typography.fontWeightRegular,
     fontSize: theme.typography.pxToRem(15),
     marginRight: theme.spacing(1),
-    '&:focus': {
+    "&:focus": {
       opacity: 1,
     },
   },
@@ -102,130 +106,169 @@ const TabContainer = styled.div`
 // navy-gray : 4d5e72;
 // light-navy : 3f6a8a
 
-axios.defaults.baseURL = 'http://15.164.105.78:8000';
-const CASE_NUM = 6;
+axios.defaults.baseURL = "http://15.164.105.78:8000";
 
 const Contents = () => {
   const history = useHistory();
   const name = useRecoilValue(nameState);
-  const [excel, setExcel] = useState(null);
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(null);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [excel, setExcel] = useState(null);
   const [idList, setIdList] = useState(null);
+  const [attention, setAttention] = useState([]);
 
   const loadExcel = (back) => {
     setExcel(back);
   };
 
   useEffect(() => {
-    setLoading(false);
-    // let pdis = [];
-    // const fetchData = async (caseNum) => {
-    //   try {
-    //     setError(null);
-    //     setData(null);
-    //     await axios
-    //       .get(`/${caseNum}`)
-    //       .then((res) => {
-    //         const replaceInString = (fullString, search, replacement) => {
-    //           return fullString.split(search).join(replacement);
-    //         };
-    //         const json = JSON.parse(replaceInString(res.data, "'", '"'));
-    //         return json;
-    //       })
-    //       .then((json) => {
-    //         pdis.push(json);
-    //       });
-    //     setData(pdis);
-    //   } catch (e) {
-    //     setError(e);
-    //   }
-    // };
-    // const loopFetch = async (CASE_NUM) => {
-    //   for (let caseNum = 1; caseNum <= CASE_NUM; caseNum++) {
-    //     try {
-    //       await fetchData(caseNum);
-    //       //   console.log(data);
-    //     } catch (e) {
-    //       setError(e);
-    //     }
-    //   }
-    //   setTab(0);
-    //   setLoading(false);
-    // };
-    // loopFetch(CASE_NUM);
+    setLoading(true);
+    //첫 로딩
+    // 1. case 개수 or server id list -> contents컴포넌트
+    // then.(2. 각 server id 별 pdi, -> contents 컴포넌트)
+    // 3. server id 별 pdi attention, image attention => explainability 컴포넌트
+    axios
+      .get("/idlist")
+      .then((res) => {
+        let str = res.data.slice(1, res.data.length - 1);
+        let list = str.split(", ").map((x) => parseInt(x));
+        list.sort((a, b) => parseInt(a) - parseInt(b));
+        return list;
+      })
+      .then((list) => {
+        setIdList(list);
+        return list;
+      }).then(list=>{
+        //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]
+        let pdis = [];
+        const fetchData = async (id,idx) => {
+          try {
+            setError(null);
+            setData(null);
+            await axios.get(`/${id}`)
+              .then((res) => {
+                const replaceInString = (fullString, search, replacement) => {
+                  return fullString.split(search).join(replacement);
+                };
+                const json = JSON.parse(replaceInString(res.data, "'", '"'));
+                return json;
+              })
+              .then(async (json) => {
+                
+                const fetchAttention = async (id,idx) => {
+                  let toSet = []; 
+                  /** attention = {imageAttention : [[],[],[],[],[],[],[],[],[]],
+                    * pdiAttention:[[],[],[],[],[],[],[],[],[]],
+                    * pdiAttention2:[]}
+                    */
+                  axios.get(`/att/${id}`).then((res) => {
+                    let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
+                    // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
+                    let arr = list.split("},{");
+                  
+                    arr.map((item) => {
+                      toSet.push(JSON.parse(item));
+                    });
+                    json['attention'] = toSet;
+                    pdis.push(json);
+                  })
+                };
+                await fetchAttention(id,idx);
+                console.log(pdis);
+                setData(pdis);
+              });
+          } catch (e) {
+            setError(e);
+          }
+        };
+
+        const loopFetch = async (CASE_NUM) => {
+          
+          for (let caseNum = 0; caseNum < CASE_NUM; caseNum++) {
+            try {
+              await fetchData(list[caseNum],caseNum);
+              //   console.log(data);
+            } catch (e) {
+              setError(e);
+            }
+          }
+          setTab(0);
+          setLoading(false);
+        };
+        loopFetch(list.length);
+      });
   }, []);
 
   useEffect(() => {
     console.log(tab);
   }, [tab]);
 
-  useEffect(() => {
-    console.log(excel);
-    let list = [];
-    if (excel) {
-      excel.map((item, idx) => {
-        if (idx % 9 === 0) {
-          list.push(item['server_id']);
-        }
-      });
-      setIdList(list);
-    }
-  }, [excel]);
+  // useEffect(() => {
+  //   console.log(excel);
+  //   let list = [];
+  //   if (excel) {
+  //     excel.map((item, idx) => {
+  //       if (idx % 9 === 0) {
+  //         list.push(item['server_id']);
+  //       }
+  //     });
+  //     setIdList(list);
+  //   }
+  // }, [excel]);
 
-  useEffect(() => {
-    if (idList) {
-      console.log(idList);
-      let pdis = [];
+  // useEffect(() => {
+  //   if (idList) {
+  //     console.log(idList);
+  //     let pdis = [];
 
-      const fetchData = async (caseNum) => {
-        try {
-          setError(null);
-          setData(null);
-          console.log(caseNum);
-          await axios
-            .get(`/${caseNum + 1}`)
-            .then((res) => {
-              const replaceInString = (fullString, search, replacement) => {
-                return fullString.split(search).join(replacement);
-              };
-              const json = JSON.parse(replaceInString(res.data, "'", '"'));
-              return json;
-            })
-            .then((json) => {
-              pdis.push(json);
-            });
+  //     const fetchData = async (caseNum) => {
+  //       try {
+  //         setError(null);
+  //         setData(null);
+  //         console.log(caseNum);
+  //         await axios
+  //           .get(`/${caseNum + 1}`)
+  //           .then((res) => {
+  //             const replaceInString = (fullString, search, replacement) => {
+  //               return fullString.split(search).join(replacement);
+  //             };
+  //             const json = JSON.parse(replaceInString(res.data, "'", '"'));
+  //             return json;
+  //           })
+  //           .then((json) => {
+  //             pdis.push(json);
+  //           });
 
-          setData(pdis);
-        } catch (e) {
-          setError(e);
-        }
-      };
+  //         setData(pdis);
+  //       } catch (e) {
+  //         setError(e);
+  //       }
+  //     };
 
-      const loopFetch = async (CASE_NUM) => {
-        for (let caseNum = 0; caseNum < CASE_NUM; caseNum++) {
-          try {
-            await fetchData(idList[caseNum]);
-            //   console.log(data);
-          } catch (e) {
-            setError(e);
-          }
-        }
+  //     const loopFetch = async (CASE_NUM) => {
+  //       for (let caseNum = 0; caseNum < CASE_NUM; caseNum++) {
+  //         try {
+  //           await fetchData(idList[caseNum]);
+  //           //   console.log(data);
+  //         } catch (e) {
+  //           setError(e);
+  //         }
+  //       }
 
-        setTab(0);
-        setLoading(false);
-      };
+  //       setTab(0);
+  //       setLoading(false);
+  //     };
 
-      loopFetch(3);
-    }
-  }, [idList]);
+  //     loopFetch(idList.length);
+  //   }
+  // }, [idList]);
 
   const getWeight = () => {};
 
   const logout = () => {
-    history.push('/');
+    history.push("/");
   };
 
   const getTabs = () => {
@@ -240,38 +283,6 @@ const Contents = () => {
     setTab(newValue);
   };
 
-  const onImportExcel = (file) => {
-    const { files } = file.target;
-    // Read the file through the FileReader object
-    const fileReader = new FileReader();
-    fileReader.onload = (event) => {
-      try {
-        const { result } = event.target;
-        // Read the entire excel table object in binary stream
-        const workbook = XLSX.read(result, { type: 'binary' });
-        // Store the obtained data
-        let data = [];
-        // traverse each worksheet to read (here by default only the first sheet is read)
-        for (const sheet in workbook.Sheets) {
-          // esline-disable-next-line
-          if (workbook.Sheets.hasOwnProperty(sheet)) {
-            // Use sheet_to_json method to convert excel to json data
-            data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
-            // break; // If only the first table is taken, uncomment this line
-          }
-        }
-        console.log(data);
-        setExcel(data);
-        setLoading(true);
-        // Finally obtained and formatted json data
-      } catch (e) {
-        // Relevant prompts for incorrect file type errors can be thrown here
-        console.log(e, 'eeee');
-      }
-    };
-    // Open the file in binary mode
-    fileReader.readAsBinaryString(files[0]);
-  };
 
   if (loading)
     return (
@@ -303,33 +314,29 @@ const Contents = () => {
             aria-label="disabled tabs example"
           >
             {getTabs().map((idx) => {
-              return <StyledTab key={data[idx - 1]['id']} label={`Case ${idx}`}></StyledTab>;
+              return (
+                <StyledTab
+                  key={data[idx - 1]["id"]}
+                  label={`Case ${idx}`}
+                ></StyledTab>
+              );
             })}
           </StyledTabs>
         </TabContainer>
 
         <Content>
-          {/* {data.map((pdi) => {
-          return <p>{JSON.stringify(pdi)}</p>;
-        })} */}
           <ExplainabilityContainer>
-            <Explainability pdi={data[tab]} pdiIdx={tab} weightList={excel}></Explainability>
-            <Explainability pdi={data[tab]}></Explainability>
+            <Explainability
+              pdi={data[tab]}
+              pdiIdx={tab}
+              attention={data[tab]['attention']}
+            ></Explainability>
+            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']}></Explainability>
           </ExplainabilityContainer>
 
           <Test callback={loadExcel} />
         </Content>
       </Container>
     );
-
-  return (
-    <div>
-      <button>
-        <input type="file" accept=".xlsx, .xls" onChange={onImportExcel} />
-        <span>Upload files</span>
-      </button>
-      <p>Support .xlsx, .xls format files</p>
-    </div>
-  );
 };
 export default Contents;

@@ -6,6 +6,7 @@ import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   box-shadow: 1px 1px 3px 1px #dadce0;
 `;
@@ -25,13 +26,19 @@ const ListItem = styled.button`
   background-color: ${(props) => (props.clicked === props.idx ? '#d1d1d1' : '#ffffff')};
   cursor: pointer;
 `;
-
-const PdiResult = ({ pdi, callback }) => {
+const Button = styled.button`
+  width: 200px;
+  align-self: center;
+`;
+const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
-  const [words, setWords] = useState(['좋아요', '모르겠어요', '기분이', '조금']);
 
   useEffect(() => {
+    console.log(`pdi,pdiIdx,attention`)
+    console.log(pdi);
+    console.log(pdiIdx); //case 번호
+    console.log(attention);
     setClicked(null);
     const parseQuestion = (pdi) => {
       let pitrQ = [];
@@ -52,6 +59,7 @@ const PdiResult = ({ pdi, callback }) => {
     console.log(clicked);
     callback(clicked);
   }, [clicked]);
+
   return (
     <Container>
       <PdiList>
@@ -67,17 +75,20 @@ const PdiResult = ({ pdi, callback }) => {
                   clicked === idx ? setClicked(null) : setClicked(idx);
                 }}
               >
-                <MyHiglighter
-                  sentence={`${item} - ${pdi[item]}`}
-                  weight={[
-                    0, 0, 0.1, 0.1, 0.26, 0.5, 0.15, 0.5, 0.65, 0.26, 0.11, 0.21, 0.53, 0.77,
-                  ]}
-                />
+                {clicked > 2 ? (
+                  <MyHiglighter
+                    sentence={`${item} - ${pdi[item]}`}
+                    weight={attention[clicked-2]}
+                  />
+                ) : (
+                  <p>{`${item} - ${pdi[item]}`}</p>
+                )}
               </ListItem>
             </PdiContainer>
           );
         })}
       </PdiList>
+      <Button>Highlight</Button>
     </Container>
   );
 };

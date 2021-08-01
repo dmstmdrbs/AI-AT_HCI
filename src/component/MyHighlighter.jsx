@@ -11,7 +11,7 @@ const RedSpan = styled.span`
   color: rgb(255, 66, 65);
 `;
 
-const MyHiglighter = ({ sentence, weight, toMark }) => {
+const MyHiglighter = ({ sentence, weight }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
   useEffect(() => {
@@ -34,7 +34,7 @@ const MyHiglighter = ({ sentence, weight, toMark }) => {
     };
     setMarked(markSentence());
     setFlag(true);
-  }, [sentence, toMark]);
+  }, [sentence]);
 
   // <p>
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}

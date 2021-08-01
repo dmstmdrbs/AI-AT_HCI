@@ -52,35 +52,47 @@ const PdiContainer = styled.div`
   }
 `;
 
-const Explainability = ({ pdi, pdiIdx, weightList }) => {
+const Explainability = ({ pdi, pdiIdx, attention }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
-  const [clicked, setClicked] = useState(null);
+  const [clicked, setClicked] = useState(0);
+  const [weights, setWeights] = useState([]);
 
   useEffect(() => {
-    console.log(pdi);
+    console.log(attention);
     setButton(true);
   }, [pdi]);
 
   useEffect(() => {
-    const strToArray = (str) => {
-      str = str.slice(1, str.length - 1);
-
-      console.log(`parsed : ${str}`);
-      let arr = str.split(', ');
-      console.log(arr);
-      return arr;
-    };
     if (!button) {
       if (clicked === null || clicked === 0 || clicked === 1)
         console.log('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
         const setHeatmap = (points) => {
-          console.log('did!');
           let heatmapInstance = h337.create({
             // only container is required, the rest will be defaults
             container: document.querySelector('.heatmap'),
           });
-
+          /**
+ * var heatmapInstance = h337.create({
+  // required container
+  container: document.querySelector('.heatmap'),
+  // backgroundColor to cover transparent areas
+  backgroundColor: 'rgba(0,0,0,.95)',
+  // custom gradient colors
+  gradient: {
+    // enter n keys between 0 and 1 here
+    // for gradient color customization
+    '.5': 'blue',
+    '.8': 'red',
+    '.95': 'white'
+  },
+  // the maximum opacity (the value with the highest intensity will have it)
+  maxOpacity: .9,
+  // minimum opacity. any value > 0 will produce
+  // no transparent gradient transition
+  minOpacity: .3
+});
+ */
           // heatmap data format
           let data = {
             max: 2,
@@ -92,26 +104,25 @@ const Explainability = ({ pdi, pdiIdx, weightList }) => {
           heatmapInstance.setData(data);
         };
 
-        console.log(`9*pdiIdx+clicked : ${9 * pdiIdx + clicked}`);
-        let pointsTest = weightList[9 * pdiIdx + clicked - 2]['image_att'];
-        console.log(pointsTest);
-        let pointsArray = strToArray(pointsTest);
-        for (let i in pointsArray) {
-          console.log(`pointsArray[${i}] : ${pointsArray[i]}`);
-        }
-        let points = [
-          { x: 128, y: 128, value: pointsArray[0] * 10 },
-          { x: 256, y: 128, value: pointsArray[1] * 10 },
-          { x: 384, y: 128, value: pointsArray[2] * 10 },
-          { x: 128, y: 256, value: pointsArray[3] * 10 },
-          { x: 256, y: 256, value: pointsArray[4] * 10 },
-          { x: 384, y: 256, value: pointsArray[5] * 10 },
-          { x: 128, y: 384, value: pointsArray[6] * 10 },
-          { x: 256, y: 384, value: pointsArray[7] * 10 },
-          { x: 384, y: 384, value: pointsArray[8] * 10 },
-        ];
+        console.log(`clicked : ${clicked}`);
+        if(clicked>2){
+          let pointsTest = attention[clicked-2]['image_att'];
+          console.log(pointsTest);
 
-        setHeatmap(points);
+          let points = [
+            { x: 128, y: 128, value: pointsTest[0] * 10 },
+            { x: 256, y: 128, value: pointsTest[1] * 10 },
+            { x: 384, y: 128, value: pointsTest[2] * 10 },
+            { x: 128, y: 256, value: pointsTest[3] * 10 },
+            { x: 256, y: 256, value: pointsTest[4] * 10 },
+            { x: 384, y: 256, value: pointsTest[5] * 10 },
+            { x: 128, y: 384, value: pointsTest[6] * 10 },
+            { x: 256, y: 384, value: pointsTest[7] * 10 },
+            { x: 384, y: 384, value: pointsTest[8] * 10 },
+          ];
+  
+          setHeatmap(points);
+        }
       }
     }
   }, [button]);
@@ -151,7 +162,12 @@ const Explainability = ({ pdi, pdiIdx, weightList }) => {
         </Button>
       </ImageContainer>
       <PdiContainer>
-        <PdiResult pdi={pdi} callback={getClickedIdx} />
+        <PdiResult
+          pdi={pdi}
+          pdiIdx={pdiIdx}
+          callback={getClickedIdx}
+          attention={attention}
+        />
       </PdiContainer>
     </Container>
   );
