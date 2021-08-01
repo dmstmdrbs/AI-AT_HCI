@@ -103,6 +103,26 @@ const StyledTab = withStyles((theme) => ({
 const TabContainer = styled.div`
   background-color: #4d5e72;
 `;
+
+// const TabPanel=(props)=>{
+//   const {children,value,index,...other}=props;
+
+//   return(
+//     <div role="tabpanel" hidden={value!==index} id={`scrollable-auto-tabpanel-${index}`}
+//       aria-labelledby={`scrollable-auto-tab-${index}`}
+//       {...other}>
+//         {value===index&&(
+//           <>{children}</>
+//         )}
+//       </div>
+//   )
+// }
+const allyProps=(index)=>{
+  return{
+    id:`scrollable-auto-tab-${index}`,
+    'aria-controls':`scrollable-auto-tabpanel-${index}`,
+  };
+}
 // navy-gray : 4d5e72;
 // light-navy : 3f6a8a
 
@@ -249,27 +269,29 @@ const Contents = () => {
             value={tab}
             indicatorColor="secondary"
             onChange={handleChange}
-            aria-label="disabled tabs example"
+            aria-label="scrollable auto tabs"
+            variant="scrollable"
+            scrollButtons="auto"
           >
             {getTabs().map((idx) => {
               return (
                 <StyledTab
                   key={data[idx - 1]["id"]}
                   label={`Case ${idx}`}
-                ></StyledTab>
+                  {...allyProps(idx)}></StyledTab>
               );
             })}
           </StyledTabs>
-        </TabContainer>
-
+        </TabContainer>   
         <Content>
           <ExplainabilityContainer>
             <Explainability
               pdi={data[tab]}
               pdiIdx={tab}
               attention={data[tab]['attention']}
+              attentionLevel='1'
             ></Explainability>
-            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']}></Explainability>
+            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']} attentionLevel='2'></Explainability>
           </ExplainabilityContainer>
 
           {/* <Test callback={loadExcel} /> */}
