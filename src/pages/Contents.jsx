@@ -147,7 +147,7 @@ const Contents = () => {
           try {
             setError(null);
             setData(null);
-            await axios.get(`/${id}`)
+            await axios.get(`/${id+1}`)
               .then((res) => {
                 const replaceInString = (fullString, search, replacement) => {
                   return fullString.split(search).join(replacement);
@@ -204,68 +204,6 @@ const Contents = () => {
   useEffect(() => {
     console.log(tab);
   }, [tab]);
-
-  // useEffect(() => {
-  //   console.log(excel);
-  //   let list = [];
-  //   if (excel) {
-  //     excel.map((item, idx) => {
-  //       if (idx % 9 === 0) {
-  //         list.push(item['server_id']);
-  //       }
-  //     });
-  //     setIdList(list);
-  //   }
-  // }, [excel]);
-
-  // useEffect(() => {
-  //   if (idList) {
-  //     console.log(idList);
-  //     let pdis = [];
-
-  //     const fetchData = async (caseNum) => {
-  //       try {
-  //         setError(null);
-  //         setData(null);
-  //         console.log(caseNum);
-  //         await axios
-  //           .get(`/${caseNum + 1}`)
-  //           .then((res) => {
-  //             const replaceInString = (fullString, search, replacement) => {
-  //               return fullString.split(search).join(replacement);
-  //             };
-  //             const json = JSON.parse(replaceInString(res.data, "'", '"'));
-  //             return json;
-  //           })
-  //           .then((json) => {
-  //             pdis.push(json);
-  //           });
-
-  //         setData(pdis);
-  //       } catch (e) {
-  //         setError(e);
-  //       }
-  //     };
-
-  //     const loopFetch = async (CASE_NUM) => {
-  //       for (let caseNum = 0; caseNum < CASE_NUM; caseNum++) {
-  //         try {
-  //           await fetchData(idList[caseNum]);
-  //           //   console.log(data);
-  //         } catch (e) {
-  //           setError(e);
-  //         }
-  //       }
-
-  //       setTab(0);
-  //       setLoading(false);
-  //     };
-
-  //     loopFetch(idList.length);
-  //   }
-  // }, [idList]);
-
-  const getWeight = () => {};
 
   const logout = () => {
     history.push("/");
@@ -334,7 +272,7 @@ const Contents = () => {
             <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']}></Explainability>
           </ExplainabilityContainer>
 
-          <Test callback={loadExcel} />
+          {/* <Test callback={loadExcel} /> */}
         </Content>
       </Container>
     );

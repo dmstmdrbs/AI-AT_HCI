@@ -17,19 +17,20 @@ const MyHiglighter = ({ sentence, weight }) => {
   useEffect(() => {
     setFlag(false);
     const words = sentence.split(' ');
-
+    console.log(sentence);
+    console.log(weight);
     const markSentence = () => {
       return (
-        <p>
+        <span>
           {words.map((word, idx) => {
-            if (weight[idx] > 0.6) return <RedSpan>{word} </RedSpan>;
-            if (weight[idx] > 0.4) return <BlueSpan>{word} </BlueSpan>;
-            if (weight[idx] > 0.25) return <YellowSpan>{word} </YellowSpan>;
+            if (weight[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
+            if (weight[idx] > 0.06) return <BlueSpan>{word} </BlueSpan>;
+            if (weight[idx] > 0.05) return <YellowSpan>{word} </YellowSpan>;
             else {
               return <span>{word} </span>;
             }
           })}
-        </p>
+        </span>
       );
     };
     setMarked(markSentence());

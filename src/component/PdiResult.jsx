@@ -56,7 +56,6 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
   }, [pdi]);
 
   useEffect(() => {
-    console.log(clicked);
     callback(clicked);
   }, [clicked]);
 
@@ -75,11 +74,14 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
                   clicked === idx ? setClicked(null) : setClicked(idx);
                 }}
               >
-                {clicked > 2 ? (
-                  <MyHiglighter
-                    sentence={`${item} - ${pdi[item]}`}
-                    weight={attention[clicked-2]}
-                  />
+                {idx >= 2 ? (
+                  <div style={{display:'inline-block'}}>
+                    {`${item} - `}
+                    <MyHiglighter
+                      sentence={`${pdi[item]}`}
+                      weight={attention[idx-2]['pdi_att_token']}
+                    />
+                  </div>
                 ) : (
                   <p>{`${item} - ${pdi[item]}`}</p>
                 )}

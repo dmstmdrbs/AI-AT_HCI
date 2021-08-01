@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import h337 from 'heatmap.js';
 import PdiResult from './PdiResult';
+import { pointsObj } from './points'
 
 const Container = styled.div`
   padding: 20px;
@@ -57,71 +58,48 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
   const [clicked, setClicked] = useState(0);
   const [weights, setWeights] = useState([]);
 
+  
   useEffect(() => {
     console.log(attention);
     setButton(true);
   }, [pdi]);
 
   useEffect(() => {
+    
     if (!button) {
       if (clicked === null || clicked === 0 || clicked === 1)
         console.log('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
-        const setHeatmap = (points) => {
-          let heatmapInstance = h337.create({
-            // only container is required, the rest will be defaults
-            container: document.querySelector('.heatmap'),
-          });
-          /**
- * var heatmapInstance = h337.create({
-  // required container
-  container: document.querySelector('.heatmap'),
-  // backgroundColor to cover transparent areas
-  backgroundColor: 'rgba(0,0,0,.95)',
-  // custom gradient colors
-  gradient: {
-    // enter n keys between 0 and 1 here
-    // for gradient color customization
-    '.5': 'blue',
-    '.8': 'red',
-    '.95': 'white'
-  },
-  // the maximum opacity (the value with the highest intensity will have it)
-  maxOpacity: .9,
-  // minimum opacity. any value > 0 will produce
-  // no transparent gradient transition
-  minOpacity: .3
-});
- */
-          // heatmap data format
-          let data = {
-            max: 2,
-            data: points,
-          };
-          console.log(data);
-          // if you have a set of datapoints always use setData instead of addData
-          // for data initialization
-          heatmapInstance.setData(data);
-        };
-
-        console.log(`clicked : ${clicked}`);
-        if(clicked>2){
-          let pointsTest = attention[clicked-2]['image_att'];
-          console.log(pointsTest);
-
-          let points = [
-            { x: 128, y: 128, value: pointsTest[0] * 10 },
-            { x: 256, y: 128, value: pointsTest[1] * 10 },
-            { x: 384, y: 128, value: pointsTest[2] * 10 },
-            { x: 128, y: 256, value: pointsTest[3] * 10 },
-            { x: 256, y: 256, value: pointsTest[4] * 10 },
-            { x: 384, y: 256, value: pointsTest[5] * 10 },
-            { x: 128, y: 384, value: pointsTest[6] * 10 },
-            { x: 256, y: 384, value: pointsTest[7] * 10 },
-            { x: 384, y: 384, value: pointsTest[8] * 10 },
-          ];
-  
-          setHeatmap(points);
+          console.log(`clicked : ${clicked}`);
+        if(clicked>=2){
+          
+          let pointsStr = attention[clicked-2]['image_att'];
+          // console.log(pointsStr);
+          // console.log(pointsStr.length);
+          let pointsArr = pointsStr.slice(1,pointsStr.length-1).split(', ');
+          let points = [];
+          pointsObj.map((item,idx)=>{
+              let obj = item; 
+              if(pointsArr[idx]*100>=1){
+                pointsArr[idx] = 0.0098;
+              }
+              obj['value']=parseFloat((pointsArr[idx]*100).toFixed(2));
+              points.push(obj);
+            });
+            
+            if(points.length===256){
+              console.log(points);
+              var heatmapInstance = h337.create({
+                container: document.querySelector('.heatmap'),
+                maxOpacity:.6
+              })
+              // heatmapInstance.setDataMax(255);
+              heatmapInstance.setData({max:1,min:0,data:points});
+              setTimeout(()=>{
+                
+                console.log(heatmapInstance.getData());
+              },1000);
+            }
         }
       }
     }
