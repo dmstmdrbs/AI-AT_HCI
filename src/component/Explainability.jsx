@@ -7,7 +7,7 @@ import PdiResult from './PdiResult';
 import { pointsObj } from './points'
 
 const Container = styled.div`
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex: 1;
   margin: 10px;
@@ -36,9 +36,14 @@ const OriginalContainer = styled.div`
   display: flex;
   align-items: center;
   width: 512px;
-  height: 512px; ;
+  height: 512px;
 `;
 const PdiContainer = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  justify-content:space-around;
   overflow-y: scroll;
   &::-webkit-scrollbar {
     width: 8px;
@@ -52,13 +57,30 @@ const PdiContainer = styled.div`
     border-radius: 6px;
   }
 `;
-
-const Explainability = ({ pdi, pdiIdx, attention }) => {
+const GuageBar = styled.div`
+display:flex;
+justify-content:center;
+  margin-bottom:10px;
+  background-color:#dbdbdb;
+  height:20px;
+  width:300px;
+`
+const GuageButton = styled.button`
+width:60px;
+height:100%;
+border: 0 ;
+`;
+const Stress = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+`;
+const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(0);
   const [weights, setWeights] = useState([]);
-
-  
+  const [radius,setRadius] = useState(40);
+  var heatmapInstance;
   useEffect(() => {
     console.log(attention);
     setButton(true);
@@ -73,7 +95,7 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
           console.log(`clicked : ${clicked}`);
         if(clicked>=2){
           
-          let pointsStr = attention[clicked-2]['image_att'];
+          let pointsStr = attentionLevel==='1' ? attention[clicked-2]['image_att'] : attention[clicked-2]['image_att2'];
           // console.log(pointsStr);
           // console.log(pointsStr.length);
           let pointsArr = pointsStr.slice(1,pointsStr.length-1).split(', ');
@@ -89,12 +111,17 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
             
             if(points.length===256){
               console.log(points);
-              var heatmapInstance = h337.create({
-                container: document.querySelector('.heatmap'),
-                maxOpacity:.6
+              heatmapInstance = h337.create({
+                container: attentionLevel==='1' ? document.querySelector('.heatmap') : document.querySelector('.heatmap-level2'),
+                maxOpacity:radius===40 ? 0.65: (radius===45 ? 0.6 : 0.5),
+                radius: radius
               })
+            
               // heatmapInstance.setDataMax(255);
-              heatmapInstance.setData({max:1,min:0,data:points});
+              heatmapInstance.setData({
+                max: 1,
+                min:0,
+                data:points});
               setTimeout(()=>{
                 
                 console.log(heatmapInstance.getData());
@@ -105,6 +132,14 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
     }
   }, [button]);
 
+  useEffect(()=>{
+      setButton(!button);
+      setTimeout(()=>{
+        setButton(false)
+      },50)
+      
+  },[radius])
+
   useEffect(() => {
     console.log(clicked);
     setButton(true);
@@ -112,6 +147,7 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
 
   const getClickedIdx = (idx) => {
     setClicked(idx);
+    setButton(true);
   };
 
   return (
@@ -125,11 +161,24 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
           </>
         ) : (
           <>
+          {attentionLevel==='1' ? 
             <HeatmapContainer className="heatmap">
               <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
-            </HeatmapContainer>
+            </HeatmapContainer> : 
+          <HeatmapContainer className="heatmap-level2">
+          <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+        </HeatmapContainer>
+        }
           </>
         )}
+        <br/>
+        <GuageBar>
+          <GuageButton style={{backgroundColor:'#FFFF66'}} onClick={()=>{setRadius(40)}}>40</GuageButton>
+          <GuageButton style={{backgroundColor:radius>=45?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(45)}}>45</GuageButton>
+          <GuageButton style={{backgroundColor:radius>=50?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(50)}}>50</GuageButton>
+          <GuageButton style={{backgroundColor:radius>=55?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(55)}}>55</GuageButton>
+          <GuageButton style={{backgroundColor:radius>=60?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(60)}}>60</GuageButton>
+        </GuageBar>
         <Button
           variant="outlined"
           onClick={() => {
@@ -146,6 +195,11 @@ const Explainability = ({ pdi, pdiIdx, attention }) => {
           callback={getClickedIdx}
           attention={attention}
         />
+        <Stress>
+          <h3>Stress result</h3>
+          <p>Classified : {pdi['gt']}</p>
+          <p>Prediction : {attention[0]['prediction']}</p>
+        </Stress>
       </PdiContainer>
     </Container>
   );

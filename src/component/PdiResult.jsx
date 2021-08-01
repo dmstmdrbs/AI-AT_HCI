@@ -1,39 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-//https://github.com/bvaughn/react-highlight-words
-import Highlighter from 'react-highlight-words';
 import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
+  flex:1;
   flex-direction: column;
-  justify-content: center;
-  box-shadow: 1px 1px 3px 1px #dadce0;
+  box-shadow: 1px 1px 2px 1px #dadce0;
 `;
 const PdiList = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 `;
-const PdiContainer = styled.li`
-  margin-bottom: 5px;
+const PdiContainer = styled.div`
+  width:100%;
   border-bottom: 2px solid #efefef;
 `;
 const ListItem = styled.button`
   border: none;
-  margin-bottom: 3px;
+  padding:5px;
+  min-width:;
+  text-align:start;
   background-color: ${(props) => (props.clicked === props.idx ? '#d1d1d1' : '#ffffff')};
   cursor: pointer;
 `;
 const Button = styled.button`
   width: 200px;
+  margin-top:20px;
   align-self: center;
+  background-color:white;
+  border-radius:5px;
+  height:2rem;
 `;
+
 const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
-
+  const [highlight,setHighlight] = useState(false);
   useEffect(() => {
     console.log(`pdi,pdiIdx,attention`)
     console.log(pdi);
@@ -59,13 +63,17 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
     callback(clicked);
   }, [clicked]);
 
+  const onClickHighlight=()=>{
+    setHighlight(prev=>!prev);
+  }
+
   return (
     <Container>
+        <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button>
       <PdiList>
         {pitrQ.map((item, idx) => {
           return (
-            <PdiContainer key={idx}>
-              <ListItem
+              <ListItem key={idx}
                 // id={pdi.id}
                 primary={`${item} - ${pdi[item]}`}
                 clicked={clicked}
@@ -75,22 +83,23 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention }) => {
                 }}
               >
                 {idx >= 2 ? (
-                  <div style={{display:'inline-block'}}>
+                  <>
                     {`${item} - `}
                     <MyHiglighter
                       sentence={`${pdi[item]}`}
                       weight={attention[idx-2]['pdi_att_token']}
                     />
-                  </div>
+                  </>
                 ) : (
-                  <p>{`${item} - ${pdi[item]}`}</p>
+                  <div>
+                    {`${item} - ${pdi[item]}`}<span style={{margin:'5px'}}></span>
+                  </div>
                 )}
+                <PdiContainer></PdiContainer>
               </ListItem>
-            </PdiContainer>
           );
         })}
       </PdiList>
-      <Button>Highlight</Button>
     </Container>
   );
 };
