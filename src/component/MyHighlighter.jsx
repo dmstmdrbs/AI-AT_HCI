@@ -3,15 +3,18 @@ import styled from 'styled-components';
 
 const YellowSpan = styled.span`
   color: rgb(252, 230, 102);
+  margin-bottom:3px;
 `;
 const BlueSpan = styled.span`
   color: rgb(54, 93, 228);
+  margin-bottom:3px;
 `;
 const RedSpan = styled.span`
   color: rgb(255, 66, 65);
+  margin-bottom:3px;
 `;
 
-const MyHiglighter = ({ sentence, weight }) => {
+const MyHiglighter = ({ sentence, weight,attentionLevel }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
   useEffect(() => {
@@ -27,7 +30,7 @@ const MyHiglighter = ({ sentence, weight }) => {
             if (weight[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
             if (weight[idx] > 0.01) return <YellowSpan>{word} </YellowSpan>;
             else {
-              return <span>{word} </span>;
+              return <span style={{marginBottom:'3px'}}>{word} </span>;
             }
           })}
         </>
@@ -41,6 +44,6 @@ const MyHiglighter = ({ sentence, weight }) => {
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <>{marked}</>;
+  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : [{weight}]</span> :<span></span>}</>;
 };
 export default MyHiglighter;
