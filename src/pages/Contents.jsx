@@ -7,7 +7,7 @@ import { nameState } from "../states/therapist";
 
 import { withStyles } from "@material-ui/core/styles";
 //import Paper from '@material-ui/core/Paper';
-import { Tabs, Tab, Button } from "@material-ui/core";
+import { Tabs, Tab, Button, TextField } from "@material-ui/core";
 //import AttentionImage from '../component/AttentionImage';
 import Explainability from "../component/Explainability";
 import Test from "../component/Test";
@@ -71,9 +71,11 @@ const Content = styled.div`
 
 const ExplainabilityContainer = styled.div`
   display: flex;
-  flex-direction: column;
 `;
 
+const ActionContainer = styled.div`
+  display:flex;
+`;
 const StyledTabs = withStyles({
   indicator: {
     display: "flex",
@@ -104,19 +106,6 @@ const TabContainer = styled.div`
   background-color: #4d5e72;
 `;
 
-// const TabPanel=(props)=>{
-//   const {children,value,index,...other}=props;
-
-//   return(
-//     <div role="tabpanel" hidden={value!==index} id={`scrollable-auto-tabpanel-${index}`}
-//       aria-labelledby={`scrollable-auto-tab-${index}`}
-//       {...other}>
-//         {value===index&&(
-//           <>{children}</>
-//         )}
-//       </div>
-//   )
-// }
 const allyProps=(index)=>{
   return{
     id:`scrollable-auto-tab-${index}`,
@@ -138,6 +127,7 @@ const Contents = () => {
   const [excel, setExcel] = useState(null);
   const [idList, setIdList] = useState(null);
   const [attention, setAttention] = useState([]);
+  const [search,setSearch] = useState('');
 
   const loadExcel = (back) => {
     setExcel(back);
@@ -196,7 +186,7 @@ const Contents = () => {
                   })
                 };
                 await fetchAttention(id,idx);
-                console.log(pdis);
+                // console.log(pdis);
                 setData(pdis);
               });
           } catch (e) {
@@ -241,6 +231,29 @@ const Contents = () => {
     setTab(newValue);
   };
 
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const searchCase =()=>{
+    if(search.length>0){
+      console.log(search);
+      console.log(data[50]);
+      
+      let found;
+      data.map((item,idx)=>{
+        if(item['image_name'].includes(search)){
+          setTab(idx);
+          found=item;
+        } 
+      })
+      console.log(found);
+      if(found===undefined){
+        alert('찾는 케이스가 없습니다');
+      }
+      setSearch('');
+    }
+  }
 
   if (loading)
     return (
@@ -260,9 +273,13 @@ const Contents = () => {
           <Title>
             <h1>AI&AT</h1>
           </Title>
-          <Button variant="outlined" onClick={logout}>
-            완료
-          </Button>
+          <ActionContainer>
+            <TextField value={search} id="search-image" label="Search image id" variant="outlined" placeholder="00004_pitr_010106.jpg" onChange={handleSearchChange}/>
+            <Button variant="outlined" onClick={searchCase} style={{margin:'10px'}}>검색</Button>
+            <Button variant="outlined" onClick={logout} style={{margin:'10px'}}>
+              완료
+            </Button>
+          </ActionContainer>
         </Header>
         <TabContainer>
           <StyledTabs
@@ -285,13 +302,13 @@ const Contents = () => {
         </TabContainer>   
         <Content>
           <ExplainabilityContainer>
+            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']} attentionLevel='2'></Explainability>
             <Explainability
               pdi={data[tab]}
               pdiIdx={tab}
               attention={data[tab]['attention']}
               attentionLevel='1'
             ></Explainability>
-            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']} attentionLevel='2'></Explainability>
           </ExplainabilityContainer>
 
           {/* <Test callback={loadExcel} /> */}
