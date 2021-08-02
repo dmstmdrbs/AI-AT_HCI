@@ -77,9 +77,11 @@ const Stress = styled.div`
 `;
 const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
-  const [clicked, setClicked] = useState(0);
+  const [clicked, setClicked] = useState(2);
   const [weights, setWeights] = useState([]);
   const [radius,setRadius] = useState(40);
+  const [selectedAtt2,setSelectedAtt2] = useState(2);
+  
   var heatmapInstance;
   useEffect(() => {
     console.log(attention);
@@ -87,15 +89,14 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   }, [pdi]);
 
   useEffect(() => {
-    
     if (!button) {
-      if (clicked === null || clicked === 0 || clicked === 1)
+      if (attentionLevel==='1' && (clicked === null || clicked === 0 || clicked === 1))
         console.log('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
           console.log(`clicked : ${clicked}`);
-        if(clicked>=2){
+        if(clicked>=2 || attentionLevel==='2'){
           
-          let pointsStr = attentionLevel==='1' ? attention[clicked-2]['image_att'] : attention[clicked-2]['image_att2'];
+          let pointsStr = attentionLevel==='1' ? attention[clicked-2]['image_att'] : attention[8]['image_att2'];
           // console.log(pointsStr);
           // console.log(pointsStr.length);
           let pointsArr = pointsStr.slice(1,pointsStr.length-1).split(', ');
@@ -150,7 +151,13 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     setButton(true);
   };
 
+  const setAtt2Idx=()=>{
+
+  }
   return (
+    <div>
+    {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
+    
     <Container>
       <ImageContainer>
         {button ? (
@@ -194,6 +201,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
           pdiIdx={pdiIdx}
           callback={getClickedIdx}
           attention={attention}
+          attentionLevel={attentionLevel}
         />
         <Stress>
           <h3>Stress result</h3>
@@ -202,6 +210,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
         </Stress>
       </PdiContainer>
     </Container>
+    </div>
   );
 };
 export default Explainability;
