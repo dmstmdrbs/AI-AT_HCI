@@ -131,7 +131,7 @@ const TestImage = ({ name }) => {
 
   return (
     <HeatmapContainer>
-      <Image src={`http://15.164.105.78:8000/${name}`} />
+      <Image src={`http://localhost:8000/${name}`} />
     </HeatmapContainer>
   );
 };
