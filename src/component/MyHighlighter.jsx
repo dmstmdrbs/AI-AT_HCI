@@ -14,11 +14,21 @@ const RedSpan = styled.span`
   margin-bottom:3px;
 `;
 
-const MyHiglighter = ({ sentence, weight,attentionLevel }) => {
+const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
+  const [tokenized, setTokenized] = useState([]);
+  const [tokenizedAtt, setTokenizedAtt] = useState([]);
+  const [markedToken,setMarkedToken] = useState(null);
   useEffect(() => {
     setFlag(false);
+    if(attentionLevel==='1'){
+      setTokenized(JSON.parse(token));
+      var arr=tokenized_att.slice(1,tokenized_att.length-1).split(', ')
+      arr = arr.map(item=>Number(item));
+      setTokenizedAtt(arr);
+    }
+
     const words = sentence.split(' ');
     console.log(sentence);
     console.log(weight);
@@ -36,7 +46,23 @@ const MyHiglighter = ({ sentence, weight,attentionLevel }) => {
         </>
       );
     };
+    const markToken = ()=>{
+      return (
+        <>
+          {
+            tokenized.map((word,idx)=>{
+              if(tokenizedAtt[idx]>0.3) return <RedSpan>{word} </RedSpan>
+              if(tokenizedAtt[idx]>0.15) return <BlueSpan>{word} </BlueSpan>
+              if(tokenizedAtt[idx]>0.06) return <YellowSpan>{word} </YellowSpan>
+              else return <span style={{marginBottom:'3px'}}>{word} </span>
+            })
+          }
+        </>
+      )
+    };
+
     setMarked(markSentence());
+    setMarkedToken(markToken());
     setFlag(true);
   }, [sentence]);
 
@@ -44,6 +70,6 @@ const MyHiglighter = ({ sentence, weight,attentionLevel }) => {
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : [{weight}]</span> :<span></span>}</>;
+  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : [{weight}]</span> :<span></span>}<br/>{markedToken}<br/><span>token weight : {tokenized_att}</span></>;
 };
 export default MyHiglighter;

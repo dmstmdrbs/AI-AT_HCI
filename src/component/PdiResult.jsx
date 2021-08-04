@@ -39,8 +39,10 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
   const [clicked, setClicked] = useState(null);
   const [highlight,setHighlight] = useState(false);
   const [att2, setAtt2]= useState(null);
+  const [tokenized,setTokenized] = useState([]);
   useEffect(() => {
     console.log(attention)
+
     if(attentionLevel==='2')
     {
       let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
@@ -95,14 +97,17 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
                 {idx >= 2 ? (
                   <>
                   {attentionLevel==='2'&&att2 ?
-                    idx-2 === att2.indexOf(att2.reduce((maxValue,currentValue)=>maxValue>currentValue ? maxValue : currentValue))?<span>[weight : <span style={{color:'#f05650'}}>{att2[idx-2]}</span>]</span>
+                    idx-2 === att2.indexOf(att2.reduce((maxValue,currentValue)=>maxValue>currentValue ? maxValue : currentValue))
+                    ?<span>[weight : <span style={{color:'#f05650'}}>{att2[idx-2]}</span>]</span>
                       :<span>[weight : {att2[idx-2]}] </span>
                         :<span></span>}
                     {`${item} - `}
                     <MyHiglighter
-                    attentionLevel={attentionLevel}
+                      attentionLevel={attentionLevel}
                       sentence={`${pdi[item]}`}
                       weight={attention[idx-2]['pdi_att_token']}
+                      token={attention[idx-2]['tokenized']}
+                      tokenized_att={attention[idx-2]['tokenized_att']}
                     />
                   </>
                 ) : (
