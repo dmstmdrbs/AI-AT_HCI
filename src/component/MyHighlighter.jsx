@@ -14,12 +14,13 @@ const RedSpan = styled.span`
   margin-bottom:3px;
 `;
 
-const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att }) => {
+const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
   const [tokenized, setTokenized] = useState([]);
   const [tokenizedAtt, setTokenizedAtt] = useState([]);
   const [markedToken,setMarkedToken] = useState(null);
+  const [weightList, setWeightList] = useState([]);
   useEffect(() => {
     setFlag(false);
     if(attentionLevel==='1'){
@@ -29,6 +30,10 @@ const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att })
       setTokenizedAtt(arr);
     }
 
+    var wArr = weight.slice(1,weight.length-1).split(', ')
+    wArr =wArr.map(item=>Number(item));
+    setWeightList(wArr);
+
     const words = sentence.split(' ');
     console.log(sentence);
     console.log(weight);
@@ -36,9 +41,9 @@ const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att })
       return (
         <>
           {words.map((word, idx) => {
-            if (weight[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
-            if (weight[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
-            if (weight[idx] > 0.01) return <YellowSpan>{word} </YellowSpan>;
+            if (weightList[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
+            if (weightList[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
+            if (weightList[idx] > 0.01) return <YellowSpan>{word} </YellowSpan>;
             else {
               return <span style={{marginBottom:'3px'}}>{word} </span>;
             }
@@ -53,7 +58,7 @@ const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att })
             tokenized.map((word,idx)=>{
               if(tokenizedAtt[idx]>0.3) return <RedSpan>{word} </RedSpan>
               if(tokenizedAtt[idx]>0.15) return <BlueSpan>{word} </BlueSpan>
-              if(tokenizedAtt[idx]>0.06) return <YellowSpan>{word} </YellowSpan>
+              if(tokenizedAtt[idx]>0.07) return <YellowSpan>{word} </YellowSpan>
               else return <span style={{marginBottom:'3px'}}>{word} </span>
             })
           }
@@ -70,6 +75,6 @@ const MyHiglighter = ({ sentence, weight,attentionLevel, token, tokenized_att })
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : [{weight}]</span> :<span></span>}<br/>{markedToken}<br/><span>token weight : {tokenized_att}</span></>;
+  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}<br/><br/>{markedToken}<br/><span>token weight : {tokenized_att}</span></>;
 };
 export default MyHiglighter;
