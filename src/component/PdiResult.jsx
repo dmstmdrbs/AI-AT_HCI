@@ -40,6 +40,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
   const [highlight,setHighlight] = useState(false);
   const [att2, setAtt2]= useState(null);
   useEffect(() => {
+    console.log(attention)
     if(attentionLevel==='2')
     {
       let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
