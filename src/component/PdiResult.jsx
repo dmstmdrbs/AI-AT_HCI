@@ -13,10 +13,7 @@ const PdiList = styled.ul`
   display: flex;
   flex-direction: column;
 `;
-const PdiContainer = styled.div`
-  width:100%;
-  border-bottom: 2px solid #efefef;
-`;
+
 const ListItem = styled.button`
   border: none;
   padding:5px;
@@ -34,7 +31,7 @@ const Button = styled.button`
   height:2rem;
 `;
 
-const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelectedAtt2 }) => {
+const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
   const [highlight,setHighlight] = useState(false);
@@ -80,13 +77,12 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
 
   return (
     <Container>
-        <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button>
-      <PdiList>
-        
+        {/* <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button> */}
+       <PdiList>
         {pitrQ.map((item, idx) => {
           return (
+           
               <ListItem key={idx}
-                // id={pdi.id}
                 primary={`${item} - ${pdi[item]}`}
                 clicked={clicked}
                 idx={idx}
@@ -115,7 +111,6 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
                     {`${item} - ${pdi[item]}`}<span style={{margin:'5px'}}></span>
                   </div>
                 )}
-                <PdiContainer></PdiContainer>
               </ListItem>
           );
         })}

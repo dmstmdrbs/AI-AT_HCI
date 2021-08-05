@@ -6,18 +6,9 @@ import { useRecoilValue } from "recoil";
 import { nameState } from "../states/therapist";
 
 import { withStyles } from "@material-ui/core/styles";
-//import Paper from '@material-ui/core/Paper';
 import { Tabs, Tab, Button, TextField } from "@material-ui/core";
-//import AttentionImage from '../component/AttentionImage';
 import Explainability from "../component/Explainability";
-import Test from "../component/Test";
 import LoadingGif from "../assets/loading.gif";
-
-import * as XLSX from "xlsx";
-import {
-  ContactSupportOutlined,
-  InsertCommentTwoTone,
-} from "@material-ui/icons";
 
 const Loading = styled.div`
   width: 100vw;
@@ -71,6 +62,7 @@ const Content = styled.div`
 
 const ExplainabilityContainer = styled.div`
   display: flex;
+  flex-direction:column;
 `;
 
 const ActionContainer = styled.div`
@@ -125,14 +117,9 @@ const Contents = () => {
   const [tab, setTab] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
-  // const [excel, setExcel] = useState(null);
-  // const [idList, setIdList] = useState(null);
-  // const [attention, setAttention] = useState([]);
   const [search,setSearch] = useState('');
 
-  // const loadExcel = (back) => {
-  //   setExcel(back);
-  // };
+
 
   useEffect(() => {
     setLoading(true);

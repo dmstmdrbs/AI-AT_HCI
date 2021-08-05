@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const YellowSpan = styled.span`
-  color: rgb(252, 230, 102);
+  color: rgb(240, 190, 80);
   margin-bottom:3px;
 `;
 const BlueSpan = styled.span`
@@ -24,7 +24,12 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
   useEffect(() => {
     setFlag(false);
     if(attentionLevel==='1'){
-      setTokenized(JSON.parse(token));
+      console.log(token);
+      let parsed = token.replace(/\",\",/gi, "");
+      parsed = parsed.replace(/, ,/g,', ');
+      console.log(JSON.parse(parsed));
+      setTokenized(JSON.parse(parsed));
+      
       var arr=tokenized_att.slice(1,tokenized_att.length-1).split(', ')
       arr = arr.map(item=>Number(item));
       setTokenizedAtt(arr);
@@ -68,6 +73,7 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
 
     setMarked(markSentence());
     setMarkedToken(markToken());
+    
     setFlag(true);
   }, [sentence]);
 
@@ -75,6 +81,16 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <>{marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}<br/><br/>{markedToken}<br/><span>token weight : {tokenized_att}</span></>;
+  return <>
+      {marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}
+      {attentionLevel==='1'&&
+      <>
+        <br/><br/>
+        {markedToken}
+        <br/>
+        <span>token weight : {tokenized_att}</span>
+      </>
+      }
+    </>;
 };
 export default MyHiglighter;

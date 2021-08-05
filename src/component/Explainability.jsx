@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createRef } from 'react';
 // import axios from 'axios';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
@@ -40,10 +40,12 @@ const OriginalContainer = styled.div`
 `;
 const PdiContainer = styled.div`
   display:flex;
+  min-height:512px;
+  flex:1;
   flex-direction:column;
-  align-items:center;
-
+  align-items:space-around;
   justify-content:space-around;
+  margin-left:40px;
   overflow-y: scroll;
   &::-webkit-scrollbar {
     width: 8px;
@@ -78,20 +80,23 @@ const Stress = styled.div`
 const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(2);
-  // const [weights, setWeights] = useState([]);
   const [radius,setRadius] = useState(40);
-  // const [selectedAtt2,setSelectedAtt2] = useState(2);
-  
+ 
+  // let canvase;
+  // let canvaseRef = createRef();
+  // let position = { drawable: false, X: -1, Y:-1};
+  // let ctx;
   var heatmapInstance;
   useEffect(() => {
     console.log(attention);
     setButton(true);
+
   }, [pdi]);
 
   useEffect(() => {
     if (!button) {
       if (attentionLevel==='1' && (clicked === null || clicked === 0 || clicked === 1))
-        alert('1번과 2번을 제외한 pdi를 선택해주세요');
+        console.log('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
           console.log(`clicked : ${clicked}`);
         if(clicked>=2 || attentionLevel==='2'){
@@ -151,65 +156,66 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     setButton(true);
   };
 
-  // const setAtt2Idx=()=>{
-
-  // }
   return (
     <div>
-    {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
-    
-    <Container>
-      <ImageContainer>
-        {button ? (
-          <>
-            <OriginalContainer>
-              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
-            </OriginalContainer>
-          </>
-        ) : (
-          <>
-          {attentionLevel==='1' ? 
-            <HeatmapContainer className="heatmap">
+      {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
+      <Container id="canvas">
+          <ImageContainer>
+            {attentionLevel==='1'&&<Stress>
+              <h3>Stress result</h3>
+              <p>Classified : {pdi['gt']}</p>
+              <p>Prediction : {attention[0]['prediction']}</p>
+            </Stress>}
+            {button ? (
+              <>
+                <OriginalContainer>
+                  <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
+                </OriginalContainer>
+              </>
+            ) : (
+              <>
+              {attentionLevel==='1' ? 
+                <HeatmapContainer className="heatmap">
+                  <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+                </HeatmapContainer> : 
+              <HeatmapContainer className="heatmap-level2">
               <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
-            </HeatmapContainer> : 
-          <HeatmapContainer className="heatmap-level2">
-          <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
-        </HeatmapContainer>
-        }
-          </>
-        )}
-        <br/>
-        <GuageBar>
-          <GuageButton style={{backgroundColor:'#FFFF66'}} onClick={()=>{setRadius(40)}}>40</GuageButton>
-          <GuageButton style={{backgroundColor:radius>=45?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(45)}}>45</GuageButton>
-          <GuageButton style={{backgroundColor:radius>=50?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(50)}}>50</GuageButton>
-          <GuageButton style={{backgroundColor:radius>=55?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(55)}}>55</GuageButton>
-          <GuageButton style={{backgroundColor:radius>=60?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(60)}}>60</GuageButton>
-        </GuageBar>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setButton(!button);
-          }}
-        >
-          {button ? 'Show Heatmap' : 'Show Original'}
-        </Button>
-      </ImageContainer>
-      <PdiContainer>
-        <PdiResult
-          pdi={pdi}
-          pdiIdx={pdiIdx}
-          callback={getClickedIdx}
-          attention={attention}
-          attentionLevel={attentionLevel}
-        />
-        <Stress>
-          <h3>Stress result</h3>
-          <p>Classified : {pdi['gt']}</p>
-          <p>Prediction : {attention[0]['prediction']}</p>
-        </Stress>
-      </PdiContainer>
-    </Container>
+            </HeatmapContainer>
+            }
+              </>
+            )}
+            <br/>
+            <GuageBar>
+              <GuageButton style={{backgroundColor:'#FFFF66'}} onClick={()=>{setRadius(40)}}>40</GuageButton>
+              <GuageButton style={{backgroundColor:radius>=45?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(45)}}>45</GuageButton>
+              <GuageButton style={{backgroundColor:radius>=50?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(50)}}>50</GuageButton>
+              <GuageButton style={{backgroundColor:radius>=55?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(55)}}>55</GuageButton>
+              <GuageButton style={{backgroundColor:radius>=60?'#FFFF66':'#dbdbdb'}} onClick={()=>{setRadius(60)}}>60</GuageButton>
+            </GuageBar>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setButton(!button);
+              }}
+            >
+              {button ? 'Show Heatmap' : 'Show Original'}
+            </Button>
+          </ImageContainer>
+          <PdiContainer>
+            {attentionLevel==='2'&&<Stress>
+                <h3>Stress result</h3>
+                <p>Classified : {pdi['gt']}</p>
+                <p>Prediction : {attention[0]['prediction']}</p>
+              </Stress>}
+            <PdiResult
+              pdi={pdi}
+              pdiIdx={pdiIdx}
+              callback={getClickedIdx}
+              attention={attention}
+              attentionLevel={attentionLevel}
+            />
+          </PdiContainer>
+      </Container>
     </div>
   );
 };
