@@ -39,7 +39,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
   const [clicked, setClicked] = useState(null);
   const [highlight,setHighlight] = useState(false);
   const [att2, setAtt2]= useState(null);
-  const [tokenized,setTokenized] = useState([]);
+
   useEffect(() => {
     console.log(attention)
 
@@ -50,10 +50,10 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel,setSelected
       setTimeout(()=>{setAtt2(arr);},100)
         
     }
-    console.log(`pdi,pdiIdx,attention`)
-    console.log(pdi);
-    console.log(pdiIdx); //case 번호
-    console.log(attention);
+    // console.log(`pdi,pdiIdx,attention`)
+    // console.log(pdi);
+    // console.log(pdiIdx); //case 번호
+    // console.log(attention);
     setClicked(null);
     const parseQuestion = (pdi) => {
       let pitrQ = [];

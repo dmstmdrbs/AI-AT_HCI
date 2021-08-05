@@ -115,7 +115,8 @@ const allyProps=(index)=>{
 // navy-gray : 4d5e72;
 // light-navy : 3f6a8a
 
-axios.defaults.baseURL = "http://15.164.105.78:8000";
+// axios.defaults.baseURL = "http://15.164.105.78:8000";
+axios.defaults.baseURL = "http://localhost:8000";
 
 const Contents = () => {
   const history = useHistory();
@@ -124,14 +125,14 @@ const Contents = () => {
   const [tab, setTab] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
-  const [excel, setExcel] = useState(null);
-  const [idList, setIdList] = useState(null);
-  const [attention, setAttention] = useState([]);
+  // const [excel, setExcel] = useState(null);
+  // const [idList, setIdList] = useState(null);
+  // const [attention, setAttention] = useState([]);
   const [search,setSearch] = useState('');
 
-  const loadExcel = (back) => {
-    setExcel(back);
-  };
+  // const loadExcel = (back) => {
+  //   setExcel(back);
+  // };
 
   useEffect(() => {
     setLoading(true);
@@ -148,7 +149,7 @@ const Contents = () => {
         return list;
       })
       .then((list) => {
-        setIdList(list);
+        // setIdList(list);
         return list;
       }).then(list=>{
         //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]

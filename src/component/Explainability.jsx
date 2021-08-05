@@ -78,9 +78,9 @@ const Stress = styled.div`
 const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(2);
-  const [weights, setWeights] = useState([]);
+  // const [weights, setWeights] = useState([]);
   const [radius,setRadius] = useState(40);
-  const [selectedAtt2,setSelectedAtt2] = useState(2);
+  // const [selectedAtt2,setSelectedAtt2] = useState(2);
   
   var heatmapInstance;
   useEffect(() => {
@@ -91,7 +91,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   useEffect(() => {
     if (!button) {
       if (attentionLevel==='1' && (clicked === null || clicked === 0 || clicked === 1))
-        console.log('1번과 2번을 제외한 pdi를 선택해주세요');
+        alert('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
           console.log(`clicked : ${clicked}`);
         if(clicked>=2 || attentionLevel==='2'){
@@ -142,7 +142,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   },[radius])
 
   useEffect(() => {
-    console.log(clicked);
+    // console.log(clicked);
     setButton(true);
   }, [clicked]);
 
@@ -151,9 +151,9 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     setButton(true);
   };
 
-  const setAtt2Idx=()=>{
+  // const setAtt2Idx=()=>{
 
-  }
+  // }
   return (
     <div>
     {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
@@ -163,17 +163,17 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
         {button ? (
           <>
             <OriginalContainer>
-              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
+              <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="pitr" />
             </OriginalContainer>
           </>
         ) : (
           <>
           {attentionLevel==='1' ? 
             <HeatmapContainer className="heatmap">
-              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+              <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="heatmap" />
             </HeatmapContainer> : 
           <HeatmapContainer className="heatmap-level2">
-          <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+          <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="heatmap" />
         </HeatmapContainer>
         }
           </>
