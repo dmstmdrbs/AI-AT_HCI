@@ -4,12 +4,13 @@ import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
-  flex:1;
   flex-direction: column;
   box-shadow: 1px 1px 2px 1px #dadce0;
 `;
 const PdiList = styled.ul`
   list-style: none;
+  list-style-type:none;
+  justify-content:start;
   display: flex;
   flex-direction: column;
 `;
@@ -94,8 +95,8 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
                   <>
                   {attentionLevel==='2'&&att2 ?
                     idx-2 === att2.indexOf(att2.reduce((maxValue,currentValue)=>maxValue>currentValue ? maxValue : currentValue))
-                    ?<span>[weight : <span style={{color:'#f05650'}}>{att2[idx-2]}</span>]</span>
-                      :<span>[weight : {att2[idx-2]}] </span>
+                    ?<span id="highlight2">[weight : <span style={{color:'#f05650'}}>{att2[idx-2]}</span>]</span>
+                      :<span id="highlight2">[weight : {att2[idx-2]}] </span>
                         :<span></span>}
                     {`${item} - `}
                     <MyHiglighter
@@ -104,6 +105,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
                       weight={attention[idx-2]['pdi_att_token']}
                       token={attention[idx-2]['tokenized']}
                       tokenized_att={attention[idx-2]['tokenized_att']}
+                      index={idx-2}
                     />
                   </>
                 ) : (

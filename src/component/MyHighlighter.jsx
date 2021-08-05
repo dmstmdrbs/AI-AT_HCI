@@ -14,7 +14,7 @@ const RedSpan = styled.span`
   margin-bottom:3px;
 `;
 
-const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }) => {
+const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, index }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
   const [tokenized, setTokenized] = useState([]);
@@ -44,7 +44,7 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
     console.log(weight);
     const markSentence = () => {
       return (
-        <>
+        <span>
           {words.map((word, idx) => {
             if (weightList[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
             if (weightList[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
@@ -53,12 +53,12 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
               return <span style={{marginBottom:'3px'}}>{word} </span>;
             }
           })}
-        </>
+        </span>
       );
     };
     const markToken = ()=>{
       return (
-        <>
+        <span>
           {
             tokenized.map((word,idx)=>{
               if(tokenizedAtt[idx]>0.3) return <RedSpan>{word} </RedSpan>
@@ -67,7 +67,7 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
               else return <span style={{marginBottom:'3px'}}>{word} </span>
             })
           }
-        </>
+        </span>
       )
     };
 
@@ -81,16 +81,16 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att }
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <>
+  return <span id={attentionLevel==='1'? 'highlight1' : ''}>
       {marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}
       {attentionLevel==='1'&&
       <>
-        <br/><br/>
+        <br/>
         {markedToken}
         <br/>
         <span>token weight : {tokenized_att}</span>
       </>
       }
-    </>;
+    </span>;
 };
 export default MyHiglighter;

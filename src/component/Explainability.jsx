@@ -39,11 +39,12 @@ const OriginalContainer = styled.div`
 `;
 const LineCanvas = styled.canvas`
   flex:1;
-  max-width:200px;
+  width:200px;
   height:460px;
   background : lightgrey;
   border-radius:15px;
   margin : 5px;
+  position:relative;
 `
 const PdiContainer = styled.div`
   display:flex;
@@ -85,34 +86,78 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(2);
   const [radius,setRadius] = useState(40);
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const drawLine=(startCoord,endCoord)=>{
-    if(!canvasRef.current){
-      return;
-    }
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-
-    if(context){
-      context.strokeStyle="red";
-      context.lineJoin = 'round';
-      context.lineWidth=5;
-
-      context.beginPath();
-      context.moveTo(startCoord.x, startCoord.y);
-      context.lineTo(endCoord.x,endCoord.y);
-      context.closePath();
-
-      context.stroke();
-    }
-  };
+  
 
   var heatmapInstance;
+
   useEffect(() => {
     console.log(attention);
     setButton(true);
+    let att1Coord=[];
+    let att2Coord=[];
+    let att1Image;
+    let att2Image;
+    const getCoord=()=>{
+      setButton(true);
+      const cumulativeOffset = function(element) {
+        let top = 0;
+        let left = 0;
+        do {
+            top += element.offsetTop  || 0;
+            left += element.offsetLeft || 0;
+            element = element.offsetParent;
+        } while(element);
+    
+        return {
+            x: left,
+            y: top,
+        };
+      };
+      let att1=document.querySelectorAll("span#highlight1");
+      let att2=document.querySelectorAll("span#highlight2");
+      for(var i =0;i<att1.length;i++){
+        att1Coord.push(cumulativeOffset(att1[i]));
+      }
+      for(var i =0;i<att2.length;i++){
+        att2Coord.push(cumulativeOffset(att2[i]));
+      }
+
+      let image1=document.querySelectorAll("div#pitr_att1");
+      let image2=document.querySelectorAll("div#pitr_att2");
+      att1Image = cumulativeOffset(image1);
+      att2Image = cumulativeOffset(image2);
+
+      console.log(att1Coord);
+      console.log(att2Coord);
+      console.log(att1Image)
+      console.log(att2Image);
+
+    }
+    getCoord();
+    const drawLine=(startCoord,endCoord)=>{
+      if(!canvasRef.current){
+        return;
+      }
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      const test = document.getElementById('canvas');
+      const offsetHeight = test.offsetHeight;
+      const offsetWidth = test.offsetWidth;
+      console.log(offsetHeight, offsetWidth)
+      if(context){
+        context.strokeStyle="red";
+        context.lineJoin = 'round';
+        context.lineWidth=5;
+
+        context.beginPath();
+        context.moveTo(startCoord.x, startCoord.y);
+        context.lineTo(endCoord.x,endCoord.y);
+        context.closePath();
+        context.stroke();
+      }
+    };
     drawLine({x:0,y:0},{x:40,y:512})
   }, [pdi]);
 
@@ -171,7 +216,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
 
   useEffect(() => {
     // console.log(clicked);
-    setButton(true);
+    // setButton(true);
     setButton(false);
   }, [clicked]);
 
@@ -184,23 +229,24 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     <div>
       {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
       <Container>
-          <ImageContainer>
+          <ImageContainer id={attentionLevel==='1' ? 'pitr_att1' : 'pitr_att2'}>
             {attentionLevel==='1'&&<Stress>
               <h3 style={{margin:'5px'}}>Stress result</h3>
               <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
               <p style={{margin:'10px'}}>Prediction : {attention[0]['prediction']}</p>
             </Stress>}
-            {button ? (
+            <>
+              {button ? (
               <>
                 <OriginalContainer>
-                  <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
+                  <Image  src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
                 </OriginalContainer>
               </>
             ) : (
               <>
               {attentionLevel==='1' ? 
                 <HeatmapContainer className="heatmap">
-                  <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
+                  <Image  src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
                 </HeatmapContainer> : 
               <HeatmapContainer className="heatmap-level2">
               <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
@@ -208,6 +254,8 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             }
               </>
             )}
+            </>
+            
             <br/>
             <GuageBar>
               <GuageButton style={{backgroundColor:'#FFFF66'}} onClick={()=>{setRadius(40)}}>40</GuageButton>
@@ -225,7 +273,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
               {button ? 'Show Heatmap' : 'Show Original'}
             </Button>
           </ImageContainer>
-          <LineCanvas></LineCanvas>
+          <canvas id="canvas" height="460" width="200"></canvas>
           <PdiContainer>
             {attentionLevel==='2'&&<Stress>
             <h3 style={{margin:'5px'}}>Stress result</h3>

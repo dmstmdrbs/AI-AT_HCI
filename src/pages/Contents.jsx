@@ -55,7 +55,6 @@ const Title = styled.div`
 const Content = styled.div`
   display: flex;
   padding: 10px;
-  flex: 1;
   align-items: center;
   justify-items: center;
 `;
