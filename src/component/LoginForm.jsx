@@ -63,7 +63,7 @@ const LoginForm = () => {
   const submit = async () => {
     if (name && phone && email) {
       await axios
-        .post('http://localhost:8000/login/', {
+        .post('http://15.164.105.78:8000/login/', {
           Name: name,
           Email: email,
           Phone: phone,

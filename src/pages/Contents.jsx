@@ -115,8 +115,8 @@ const allyProps=(index)=>{
 // navy-gray : 4d5e72;
 // light-navy : 3f6a8a
 
-// axios.defaults.baseURL = "http://15.164.105.78:8000";
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "http://15.164.105.78:8000";
+// axios.defaults.baseURL = "http://localhost:8000";
 
 const Contents = () => {
   const history = useHistory();

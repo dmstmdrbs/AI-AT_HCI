@@ -163,17 +163,17 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
         {button ? (
           <>
             <OriginalContainer>
-              <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="pitr" />
+              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
             </OriginalContainer>
           </>
         ) : (
           <>
           {attentionLevel==='1' ? 
             <HeatmapContainer className="heatmap">
-              <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="heatmap" />
+              <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
             </HeatmapContainer> : 
           <HeatmapContainer className="heatmap-level2">
-          <Image src={`http://localhost:8000/test/${pdi['id']}`} alt="heatmap" />
+          <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
         </HeatmapContainer>
         }
           </>
