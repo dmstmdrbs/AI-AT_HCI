@@ -126,8 +126,8 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
 
       let image1=document.querySelectorAll("div#pitr_att1");
       let image2=document.querySelectorAll("div#pitr_att2");
-      att1Image = cumulativeOffset(image1);
-      att2Image = cumulativeOffset(image2);
+      att1Image = cumulativeOffset(image1[0]);
+      att2Image = cumulativeOffset(image2[0]);
 
       console.log(att1Coord);
       console.log(att2Coord);
