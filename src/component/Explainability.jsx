@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 // import axios from 'axios';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
@@ -9,9 +9,8 @@ import { pointsObj } from './points'
 const Container = styled.div`
   padding: 10px;
   display: flex;
-  flex: 1;
+  flex-basis:auto;
   margin: 10px;
-  justify-content: space-around;
   align-items: center;
   box-shadow: 1px 1px 2px 1px #dadce0;
 `;
@@ -38,14 +37,18 @@ const OriginalContainer = styled.div`
   width: 512px;
   height: 512px;
 `;
+const LineCanvas = styled.canvas`
+  flex:1;
+  max-width:200px;
+  height:460px;
+  background : lightgrey;
+  border-radius:15px;
+  margin : 5px;
+`
 const PdiContainer = styled.div`
   display:flex;
   min-height:512px;
-  flex:1;
   flex-direction:column;
-  align-items:space-around;
-  justify-content:space-around;
-  margin-left:40px;
   overflow-y: scroll;
   &::-webkit-scrollbar {
     width: 8px;
@@ -76,21 +79,41 @@ const Stress = styled.div`
   display:flex;
   flex-direction:column;
   align-items:center;
+  
 `;
 const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(2);
   const [radius,setRadius] = useState(40);
- 
-  // let canvase;
-  // let canvaseRef = createRef();
-  // let position = { drawable: false, X: -1, Y:-1};
-  // let ctx;
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const drawLine=(startCoord,endCoord)=>{
+    if(!canvasRef.current){
+      return;
+    }
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    if(context){
+      context.strokeStyle="red";
+      context.lineJoin = 'round';
+      context.lineWidth=5;
+
+      context.beginPath();
+      context.moveTo(startCoord.x, startCoord.y);
+      context.lineTo(endCoord.x,endCoord.y);
+      context.closePath();
+
+      context.stroke();
+    }
+  };
+
   var heatmapInstance;
   useEffect(() => {
     console.log(attention);
     setButton(true);
-
+    drawLine({x:0,y:0},{x:40,y:512})
   }, [pdi]);
 
   useEffect(() => {
@@ -149,6 +172,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   useEffect(() => {
     // console.log(clicked);
     setButton(true);
+    setButton(false);
   }, [clicked]);
 
   const getClickedIdx = (idx) => {
@@ -159,12 +183,12 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   return (
     <div>
       {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
-      <Container id="canvas">
+      <Container>
           <ImageContainer>
             {attentionLevel==='1'&&<Stress>
-              <h3>Stress result</h3>
-              <p>Classified : {pdi['gt']}</p>
-              <p>Prediction : {attention[0]['prediction']}</p>
+              <h3 style={{margin:'5px'}}>Stress result</h3>
+              <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
+              <p style={{margin:'10px'}}>Prediction : {attention[0]['prediction']}</p>
             </Stress>}
             {button ? (
               <>
@@ -201,11 +225,12 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
               {button ? 'Show Heatmap' : 'Show Original'}
             </Button>
           </ImageContainer>
+          <LineCanvas></LineCanvas>
           <PdiContainer>
             {attentionLevel==='2'&&<Stress>
-                <h3>Stress result</h3>
-                <p>Classified : {pdi['gt']}</p>
-                <p>Prediction : {attention[0]['prediction']}</p>
+            <h3 style={{margin:'5px'}}>Stress result</h3>
+              <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
+              <p style={{margin:'10px'}}>Prediction : {attention[0]['prediction']}</p>
               </Stress>}
             <PdiResult
               pdi={pdi}
