@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import Xarrow ,{Xwrapper} from 'react-xarrows';
 // import axios from 'axios';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
@@ -9,6 +10,7 @@ import { pointsObj } from './points'
 const Container = styled.div`
   padding: 10px;
   display: flex;
+  position:relative;
   flex-basis:auto;
   margin: 10px;
   align-items: center;
@@ -18,6 +20,7 @@ const ImageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position:relative;
 `;
 const Image = styled.img`
   width: 100%;
@@ -37,16 +40,9 @@ const OriginalContainer = styled.div`
   width: 512px;
   height: 512px;
 `;
-const LineCanvas = styled.canvas`
-  flex:1;
-  width:200px;
-  height:460px;
-  background : lightgrey;
-  border-radius:15px;
-  margin : 5px;
-  position:relative;
-`
+
 const PdiContainer = styled.div`
+  margin-left:100px;
   display:flex;
   min-height:512px;
   flex-direction:column;
@@ -86,79 +82,23 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
   const [clicked, setClicked] = useState(2);
   const [radius,setRadius] = useState(40);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  
+  const [att2Weight,setAtt2Weight] = useState(null);
+  const imageRef1 = {id:'pitr1',ref:useRef(null)};
+  const imageRef2 = {id:'pitr2', ref:useRef(null)}
+  const att1Ref =[{},{},{id:'pdi3',ref:useRef(null)},{id:'pdi4',ref:useRef(null)},{id:'pdi5',ref:useRef(null)},{id:'pdi6',ref:useRef(null)},{id:'pdi7',ref:useRef(null)},{id:'pdi8',ref:useRef(null)},{id:'pdi9',ref:useRef(null)},{id:'pdi10',ref:useRef(null)}]
+  const att2Ref =[{},{},{id:'pdi3',ref:useRef(null)},{id:'pdi4',ref:useRef(null)},{id:'pdi5',ref:useRef(null)},{id:'pdi6',ref:useRef(null)},{id:'pdi7',ref:useRef(null)},{id:'pdi8',ref:useRef(null)},{id:'pdi9',ref:useRef(null)},{id:'pdi10',ref:useRef(null)}]
 
   var heatmapInstance;
 
   useEffect(() => {
     console.log(attention);
+    let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
+    arr = arr.map(strNum=>Number(strNum)); 
+    setAtt2Weight(arr);
+    console.log(arr);
     setButton(true);
-    let att1Coord=[];
-    let att2Coord=[];
-    let att1Image;
-    let att2Image;
-    const getCoord=()=>{
-      setButton(true);
-      const cumulativeOffset = function(element) {
-        let top = 0;
-        let left = 0;
-        do {
-            top += element.offsetTop  || 0;
-            left += element.offsetLeft || 0;
-            element = element.offsetParent;
-        } while(element);
-    
-        return {
-            x: left,
-            y: top,
-        };
-      };
-      let att1=document.querySelectorAll("span#highlight1");
-      let att2=document.querySelectorAll("span#highlight2");
-      for(var i =0;i<att1.length;i++){
-        att1Coord.push(cumulativeOffset(att1[i]));
-      }
-      for(var i =0;i<att2.length;i++){
-        att2Coord.push(cumulativeOffset(att2[i]));
-      }
-
-      let image1=document.querySelectorAll("div#pitr_att1");
-      let image2=document.querySelectorAll("div#pitr_att2");
-      att1Image = cumulativeOffset(image1[0]);
-      att2Image = cumulativeOffset(image2[0]);
-
-      console.log(att1Coord);
-      console.log(att2Coord);
-      console.log(att1Image)
-      console.log(att2Image);
-
-    }
-    getCoord();
-    const drawLine=(startCoord,endCoord)=>{
-      if(!canvasRef.current){
-        return;
-      }
-      const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
-      const test = document.getElementById('canvas');
-      const offsetHeight = test.offsetHeight;
-      const offsetWidth = test.offsetWidth;
-      console.log(offsetHeight, offsetWidth)
-      if(context){
-        context.strokeStyle="red";
-        context.lineJoin = 'round';
-        context.lineWidth=5;
-
-        context.beginPath();
-        context.moveTo(startCoord.x, startCoord.y);
-        context.lineTo(endCoord.x,endCoord.y);
-        context.closePath();
-        context.stroke();
-      }
-    };
-    drawLine({x:0,y:0},{x:40,y:512})
+    console.log(imageRef1);
+    console.log(imageRef2)
   }, [pdi]);
 
   useEffect(() => {
@@ -228,8 +168,8 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   return (
     <div>
       {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
-      <Container>
-          <ImageContainer id={attentionLevel==='1' ? 'pitr_att1' : 'pitr_att2'}>
+      <Container id="canvas">
+          <ImageContainer ref={attentionLevel==='1'?imageRef1:imageRef2} id={attentionLevel==='1' ? 'pitr_att1' : 'pitr_att2'}>
             {attentionLevel==='1'&&<Stress>
               <h3 style={{margin:'5px'}}>Stress result</h3>
               <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
@@ -273,7 +213,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
               {button ? 'Show Heatmap' : 'Show Original'}
             </Button>
           </ImageContainer>
-          <canvas id="canvas" height="460" width="200"></canvas>
+          
           <PdiContainer>
             {attentionLevel==='2'&&<Stress>
             <h3 style={{margin:'5px'}}>Stress result</h3>
@@ -286,8 +226,14 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
               callback={getClickedIdx}
               attention={attention}
               attentionLevel={attentionLevel}
+              level1Ref={att1Ref}
+              level2Ref={att2Ref}
             />
           </PdiContainer>
+          <Xwrapper>
+            {attentionLevel==='1' ? att1Ref.map((ref,idx)=>(idx>=2?<Xarrow width={attention['pdi_answer_att2']}showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null)):att2Ref.map((ref,idx)=>(idx>=2?<Xarrow strokeWidth={att2Weight[idx-2]*10} showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))}
+          </Xwrapper>
+          
       </Container>
     </div>
   );

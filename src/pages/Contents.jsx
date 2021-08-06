@@ -62,6 +62,7 @@ const Content = styled.div`
 const ExplainabilityContainer = styled.div`
   display: flex;
   flex-direction:column;
+  align-items:space-evenly;
 `;
 
 const ActionContainer = styled.div`

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import styled from 'styled-components';
 import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  position:relative;
   box-shadow: 1px 1px 2px 1px #dadce0;
 `;
 const PdiList = styled.ul`
@@ -12,10 +13,12 @@ const PdiList = styled.ul`
   list-style-type:none;
   justify-content:start;
   display: flex;
+  position:relative;
   flex-direction: column;
 `;
 
 const ListItem = styled.button`
+  position:relative;
   border: none;
   padding:5px;
   min-width:;
@@ -32,19 +35,20 @@ const Button = styled.button`
   height:2rem;
 `;
 
-const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
+const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,level2Ref }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
   const [highlight,setHighlight] = useState(false);
   const [att2, setAtt2]= useState(null);
-
+  const pdiRef = useRef(
+    null
+  );
   useEffect(() => {
     console.log(attention)
-
     if(attentionLevel==='2')
     {
       let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
-      arr.map(strNum=>Number(strNum)); 
+      arr=arr.map(strNum=>Number(strNum)); 
       setTimeout(()=>{setAtt2(arr);},100)
         
     }
@@ -76,14 +80,18 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
     setHighlight(prev=>!prev);
   }
 
+
+if(level1Ref||level2Ref)
   return (
     <Container>
         {/* <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button> */}
        <PdiList>
         {pitrQ.map((item, idx) => {
           return (
-           
+            
               <ListItem key={idx}
+                ref={idx>=2?(attentionLevel==='1'?level1Ref[idx]:level2Ref[idx]):null}
+                id={attentionLevel==='1'?level1Ref[idx].id:level2Ref[idx].id}
                 primary={`${item} - ${pdi[item]}`}
                 clicked={clicked}
                 idx={idx}
@@ -121,3 +129,4 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel }) => {
   );
 };
 export default PdiResult;
+
