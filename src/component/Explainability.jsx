@@ -90,12 +90,15 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
 
   var heatmapInstance;
 
-  useEffect(() => {
+  useEffect(()=>{
     console.log(attention);
     let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
     arr = arr.map(strNum=>Number(strNum)); 
     setAtt2Weight(arr);
     console.log(arr);
+  },[])
+  useEffect(() => {
+    
     setButton(true);
     console.log(imageRef1);
     console.log(imageRef2)
@@ -231,7 +234,8 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             />
           </PdiContainer>
           <Xwrapper>
-            {attentionLevel==='1' ? att1Ref.map((ref,idx)=>(idx>=2?<Xarrow width={attention['pdi_answer_att2']}showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null)):att2Ref.map((ref,idx)=>(idx>=2?<Xarrow strokeWidth={att2Weight[idx-2]*10} showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))}
+            {attentionLevel==='1' ? att1Ref.map((ref,idx)=>(idx>=2?<Xarrow width={attention['pdi_answer_att2']}showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))
+            :att2Weight&&att2Ref.map((ref,idx)=>(idx>=2?<Xarrow strokeWidth={att2Weight[idx-2]*10} showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))}
           </Xwrapper>
           
       </Container>
