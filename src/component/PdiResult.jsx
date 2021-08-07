@@ -131,7 +131,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
                   // console.log(item,idx)
                   return <>
                     <TokenText ref={level1Ref[idx]}>
-                      [{(token[clicked-2]['tokenizedWeight'][idx]*100).toFixed(2)}%] {item}
+                      [{(token[clicked-2]['tokenizedWeight'][idx]*100).toFixed(1)}%] {item}
                     </TokenText>
                   </>
                 })
