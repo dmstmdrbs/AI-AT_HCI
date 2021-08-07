@@ -167,7 +167,7 @@ const Contents = () => {
                     let arr = list.split("},{");
                     
                     arr.map((item) => {
-                      console.log()
+                
                       //attention parsing
                       let tokenized='';
                       let obj={};
@@ -286,7 +286,7 @@ const Contents = () => {
   }, []);
 
   useEffect(() => {
-    console.log(tab);
+    // console.log(tab);
   }, [tab]);
 
   const logout = () => {
@@ -311,8 +311,8 @@ const Contents = () => {
 
   const searchCase =()=>{
     if(search.length>0){
-      console.log(search);
-      console.log(data[50]);
+      // console.log(search);
+      // console.log(data[50]);
       
       let found;
       data.map((item,idx)=>{
@@ -321,7 +321,7 @@ const Contents = () => {
           found=item;
         } 
       })
-      console.log(found);
+      // console.log(found);
       if(found===undefined){
         alert('찾는 케이스가 없습니다');
       }
