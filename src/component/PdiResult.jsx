@@ -4,7 +4,6 @@ import MyHiglighter from './MyHighlighter';
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
   position:relative;
   box-shadow: 1px 1px 2px 1px #dadce0;
 `;
@@ -26,6 +25,7 @@ const ListItem = styled.button`
   background-color: ${(props) => (props.clicked === props.idx ? '#d1d1d1' : '#ffffff')};
   cursor: pointer;
 `;
+
 const Button = styled.button`
   width: 200px;
   margin-top:20px;
@@ -35,16 +35,48 @@ const Button = styled.button`
   height:2rem;
 `;
 
+const TokenContainer = styled.div`
+  width:150px;
+  margin-top:60px;
+  display:flex;
+  flex-direction:column;
+  text-align:start;
+`
+const TokenText = styled.span`
+  margin:5px;
+  font-size:1rem;
+`
 const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,level2Ref }) => {
   const [pitrQ, setPitrQ] = useState([]);
   const [clicked, setClicked] = useState(null);
   const [highlight,setHighlight] = useState(false);
   const [att2, setAtt2]= useState(null);
-  const pdiRef = useRef(
-    null
-  );
+  const [token,setToken] = useState(null);
+  const pdiRef = useRef(null);
+
+  useEffect(()=>{
+    
+  },[]);
+
   useEffect(() => {
-    console.log(attention)
+    
+    console.log(attention);
+    if(attentionLevel==='1'){
+      let arr = attention.map((att,idx)=>{
+        if(idx<=7){
+          let tokenized = att['tokenized'].replace(/\",\",/gi, "");
+          tokenized = tokenized.replace(/, ,/g,', ');
+          tokenized = JSON.parse(tokenized)
+          
+          let tokenizedWeight=att['tokenized_att'].slice(1,att['tokenized_att'].length-1).split(', ')
+          tokenizedWeight = tokenizedWeight.map(item=>Number(item));
+          console.log(tokenized,tokenizedWeight);
+          return {tokenized : tokenized, tokenizedWeight:tokenizedWeight}
+        }
+      })
+      setToken(arr);
+      console.log(level1Ref);
+    }
     if(attentionLevel==='2')
     {
       let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
@@ -52,10 +84,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
       setTimeout(()=>{setAtt2(arr);},100)
         
     }
-    // console.log(`pdi,pdiIdx,attention`)
-    // console.log(pdi);
-    // console.log(pdiIdx); //case 번호
-    // console.log(attention);
+
     setClicked(null);
     const parseQuestion = (pdi) => {
       let pitrQ = [];
@@ -74,24 +103,47 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
 
   useEffect(() => {
     callback(clicked);
+    // if(attentionLevel==='1'&&attention){
+    //     console.log(attention[clicked-2]);
+    //     let parsed = attention[clicked-2]['tokenized'].replace(/\",\",/gi, "");
+    //     parsed = parsed.replace(/, ,/g,', ');
+    //     console.log(JSON.parse(parsed));
+    //     setToken(JSON.parse(parsed));
+    //     var temp=attention[clicked-2]['tokenized_att'].slice(1,attention[clicked-2]['tokenized_att'].length-1).split(', ')
+    //     temp = temp.map(item=>Number(item));
+    //     setTokenWeight(temp);
+    //     console.log(parsed);  
+    // }
   }, [clicked]);
 
   const onClickHighlight=()=>{
     setHighlight(prev=>!prev);
   }
 
-
-if(level1Ref||level2Ref)
-  return (
-    <Container>
+    return (
+      <Container>
         {/* <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button> */}
-       <PdiList>
-        {pitrQ.map((item, idx) => {
-          return (
-            
+        {
+          attentionLevel==='1'&&level1Ref&&
+          <TokenContainer>
+              {
+                token&&clicked>=2&&token[clicked-2]['tokenized'].map((item,idx)=>{
+                  console.log(item,idx)
+                  return <>
+                    <TokenText ref={level1Ref[idx]}>
+                      [{token[clicked-2]['tokenizedWeight'][idx]}] {item}
+                    </TokenText>
+                  </>
+                })
+              }
+          </TokenContainer>
+        }
+        <PdiList>
+          {pitrQ.map((item, idx) => {
+            return (
               <ListItem key={idx}
-                ref={idx>=2?(attentionLevel==='1'?level1Ref[idx]:level2Ref[idx]):null}
-                id={attentionLevel==='1'?level1Ref[idx].id:level2Ref[idx].id}
+                ref={idx>=2?level2Ref[idx]:null}
+                id={idx>=2?level2Ref[idx].id:null}
                 primary={`${item} - ${pdi[item]}`}
                 clicked={clicked}
                 idx={idx}
@@ -122,11 +174,11 @@ if(level1Ref||level2Ref)
                   </div>
                 )}
               </ListItem>
-          );
-        })}
-      </PdiList>
-    </Container>
-  );
+            );
+          })}
+        </PdiList>
+      </Container>
+    );
 };
 export default PdiResult;
 

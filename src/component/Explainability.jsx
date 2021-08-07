@@ -80,26 +80,43 @@ const Stress = styled.div`
 `;
 const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   const [button, setButton] = useState(null); //true = Show Heatmap, false = Show original
-  const [clicked, setClicked] = useState(2);
+  const [clicked, setClicked] = useState(null);
   const [radius,setRadius] = useState(40);
   const [att2Weight,setAtt2Weight] = useState(null);
+  const [att1Weight, setAtt1Weight] = useState(null);
   const imageRef1 = {id:'pitr1',ref:useRef(null)};
   const imageRef2 = {id:'pitr2', ref:useRef(null)}
-  const att1Ref =[{},{},{id:'pdi3',ref:useRef(null)},{id:'pdi4',ref:useRef(null)},{id:'pdi5',ref:useRef(null)},{id:'pdi6',ref:useRef(null)},{id:'pdi7',ref:useRef(null)},{id:'pdi8',ref:useRef(null)},{id:'pdi9',ref:useRef(null)},{id:'pdi10',ref:useRef(null)}]
+  const att1Ref =[{id:'token1',ref:useRef(null)},{id:'token2',ref:useRef(null)},{id:'token3',ref:useRef(null)},{id:'token4',ref:useRef(null)},{id:'token5',ref:useRef(null)},{id:'token6',ref:useRef(null)},{id:'token7',ref:useRef(null)},{id:'token8',ref:useRef(null)},{id:'token9',ref:useRef(null)},{id:'token10',ref:useRef(null)},{id:'token11',ref:useRef(null)},{id:'token12',ref:useRef(null)},{id:'token13',ref:useRef(null)},{id:'token14',ref:useRef(null)},{id:'token15',ref:useRef(null)}]
   const att2Ref =[{},{},{id:'pdi3',ref:useRef(null)},{id:'pdi4',ref:useRef(null)},{id:'pdi5',ref:useRef(null)},{id:'pdi6',ref:useRef(null)},{id:'pdi7',ref:useRef(null)},{id:'pdi8',ref:useRef(null)},{id:'pdi9',ref:useRef(null)},{id:'pdi10',ref:useRef(null)}]
 
   var heatmapInstance;
 
   useEffect(()=>{
     console.log(attention);
+        
+  },[])
+  useEffect(() => {
     let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
     arr = arr.map(strNum=>Number(strNum)); 
     setAtt2Weight(arr);
     console.log(arr);
-  },[])
-  useEffect(() => {
-    
     setButton(true);
+
+    if(attentionLevel==='1'){
+      let arr = attention.map((att,idx)=>{
+        if(idx<=7){
+          let tokenized = att['tokenized'].replace(/\",\",/gi, "");
+          tokenized = tokenized.replace(/, ,/g,', ');
+          tokenized = JSON.parse(tokenized)
+          
+          let tokenizedWeight=att['tokenized_att'].slice(1,att['tokenized_att'].length-1).split(', ')
+          tokenizedWeight = tokenizedWeight.map(item=>Number(item));
+          console.log(tokenized,tokenizedWeight);
+          return {tokenized : tokenized, tokenizedWeight:tokenizedWeight}
+        }
+      })
+      setAtt1Weight(arr);
+    }
     console.log(imageRef1);
     console.log(imageRef2)
   }, [pdi]);
@@ -129,7 +146,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             if(points.length===256){
               console.log(points);
               heatmapInstance = h337.create({
-                container: attentionLevel==='1' ? document.querySelector('.heatmap') : document.querySelector('.heatmap-level2'),
+                container: attentionLevel==='1' ? document.querySelector('.heatmap') : document.querySelector('.heatmapLevel2'),
                 maxOpacity:radius===40 ? 0.65: (radius===45 ? 0.6 : 0.5),
                 radius: radius
               })
@@ -139,10 +156,10 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
                 max: 1,
                 min:0,
                 data:points});
-              setTimeout(()=>{
+              // setTimeout(()=>{
                 
-                console.log(heatmapInstance.getData());
-              },1000);
+              //   console.log(heatmapInstance.getData());
+              // },1000);
             }
         }
       }
@@ -154,18 +171,23 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
       setTimeout(()=>{
         setButton(false)
       },50)
-      
   },[radius])
 
-  useEffect(() => {
-    // console.log(clicked);
-    // setButton(true);
-    setButton(false);
+   useEffect(() => {
+  //   // console.log(clicked);
+  //   // setButton(true);
+    if(button===true)
+    { setButton(!button);
+      setButton(!button);
+    }
+    console.log(att1Ref)
   }, [clicked]);
 
   const getClickedIdx = (idx) => {
     setClicked(idx);
+    // setButton(true);
     setButton(true);
+
   };
 
   return (
@@ -173,16 +195,11 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
       {attentionLevel==='1' ? <h2>Attention Level 1</h2> : <h2>Attention Level 2</h2>}
       <Container id="canvas">
           <ImageContainer ref={attentionLevel==='1'?imageRef1:imageRef2} id={attentionLevel==='1' ? 'pitr_att1' : 'pitr_att2'}>
-            {attentionLevel==='1'&&<Stress>
-              <h3 style={{margin:'5px'}}>Stress result</h3>
-              <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
-              <p style={{margin:'10px'}}>Prediction : {attention[0]['prediction']}</p>
-            </Stress>}
             <>
               {button ? (
               <>
                 <OriginalContainer>
-                  <Image  src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
+                  <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="pitr" />
                 </OriginalContainer>
               </>
             ) : (
@@ -191,7 +208,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
                 <HeatmapContainer className="heatmap">
                   <Image  src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
                 </HeatmapContainer> : 
-              <HeatmapContainer className="heatmap-level2">
+              <HeatmapContainer className="heatmapLevel2">
               <Image src={`http://15.164.105.78:8000/test/${pdi['id']}`} alt="heatmap" />
             </HeatmapContainer>
             }
@@ -218,11 +235,11 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
           </ImageContainer>
           
           <PdiContainer>
-            {attentionLevel==='2'&&<Stress>
-            <h3 style={{margin:'5px'}}>Stress result</h3>
+            <Stress>
+              <h3 style={{margin:'5px'}}>Stress result</h3>
               <p style={{margin:'5px'}}>Classified : {pdi['gt']}</p>
               <p style={{margin:'10px'}}>Prediction : {attention[0]['prediction']}</p>
-              </Stress>}
+            </Stress>
             <PdiResult
               pdi={pdi}
               pdiIdx={pdiIdx}
@@ -234,9 +251,29 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             />
           </PdiContainer>
           <Xwrapper>
-            {attentionLevel==='1' ? att1Ref.map((ref,idx)=>(idx>=2?<Xarrow width={attention['pdi_answer_att2']}showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))
-            :att2Weight&&att2Ref.map((ref,idx)=>(idx>=2?<Xarrow strokeWidth={att2Weight[idx-2]*10} showHead={false} curveness="0" start={attentionLevel==='1'?att1Ref[idx]:att2Ref[idx]} end={attentionLevel==='1'?imageRef1:imageRef2} />:null))}
+            {
+            attentionLevel==='1'&&clicked>=2&&att1Weight&&
+            att1Weight[clicked-2]['tokenized'].map((ref,idx)=>((
+                                    <Xarrow
+                                      strokeWidth={att1Weight[clicked-2]['tokenizedWeight'][idx]*10}
+                                      showHead={false} 
+                                      curveness="0" 
+                                      start={att1Ref[idx]} 
+                                      end={imageRef1} 
+                                    />)))}
           </Xwrapper>
+          <Xwrapper>
+            {attentionLevel==='2'&&
+            att2Weight&&att2Ref.map((ref,idx)=>(idx>=2?<Xarrow 
+                                                          strokeWidth={att2Weight[idx-2]*10} 
+                                                          showHead={false} 
+                                                          curveness="0" 
+                                                          start={att2Ref[idx]} 
+                                                          end={imageRef2} 
+                                                        />:null))}
+          </Xwrapper>
+
+          
           
       </Container>
     </div>

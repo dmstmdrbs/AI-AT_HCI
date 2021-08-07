@@ -21,27 +21,27 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, 
   const [tokenizedAtt, setTokenizedAtt] = useState([]);
   const [markedToken,setMarkedToken] = useState(null);
   const [weightList, setWeightList] = useState([]);
+  useEffect(()=>{
+
+  },[])
+
   useEffect(() => {
     setFlag(false);
-    if(attentionLevel==='1'){
-      console.log(token);
-      let parsed = token.replace(/\",\",/gi, "");
-      parsed = parsed.replace(/, ,/g,', ');
-      console.log(JSON.parse(parsed));
-      setTokenized(JSON.parse(parsed));
+    // if(attentionLevel==='1'){
+    //   let parsed = token.replace(/\",\",/gi, "");
+    //   parsed = parsed.replace(/, ,/g,', ');
+    //   setTokenized(JSON.parse(parsed));
       
-      var arr=tokenized_att.slice(1,tokenized_att.length-1).split(', ')
-      arr = arr.map(item=>Number(item));
-      setTokenizedAtt(arr);
-    }
+    //   var arr=tokenized_att.slice(1,tokenized_att.length-1).split(', ')
+    //   arr = arr.map(item=>Number(item));
+    //   setTokenizedAtt(arr);
+    // }
 
     var wArr = weight.slice(1,weight.length-1).split(', ')
     wArr =wArr.map(item=>Number(item));
     setWeightList(wArr);
 
     const words = sentence.split(' ');
-    console.log(sentence);
-    console.log(weight);
     const markSentence = () => {
       return (
         <span>
@@ -56,23 +56,23 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, 
         </span>
       );
     };
-    const markToken = ()=>{
-      return (
-        <span>
-          {
-            tokenized.map((word,idx)=>{
-              if(tokenizedAtt[idx]>0.3) return <RedSpan>{word} </RedSpan>
-              if(tokenizedAtt[idx]>0.15) return <BlueSpan>{word} </BlueSpan>
-              if(tokenizedAtt[idx]>0.07) return <YellowSpan>{word} </YellowSpan>
-              else return <span style={{marginBottom:'3px'}}>{word} </span>
-            })
-          }
-        </span>
-      )
-    };
+    // const markToken = ()=>{
+    //   return (
+    //     <span>
+    //       {
+    //         tokenized.map((word,idx)=>{
+    //           if(tokenizedAtt[idx]>0.3) return <RedSpan>{word} </RedSpan>
+    //           if(tokenizedAtt[idx]>0.15) return <BlueSpan>{word} </BlueSpan>
+    //           if(tokenizedAtt[idx]>0.07) return <YellowSpan>{word} </YellowSpan>
+    //           else return <span style={{marginBottom:'3px'}}>{word} </span>
+    //         })
+    //       }
+    //     </span>
+    //   )
+    // };
 
     setMarked(markSentence());
-    setMarkedToken(markToken());
+    // setMarkedToken(markToken());
     
     setFlag(true);
   }, [sentence]);
@@ -83,14 +83,14 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, 
   // </p>
   return <span id={attentionLevel==='1'? 'highlight1' : ''}>
       {marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}
-      {attentionLevel==='1'&&
+      {/* {attentionLevel==='1'&&
       <>
         <br/>
         {markedToken}
         <br/>
         <span>token weight : {tokenized_att}</span>
       </>
-      }
+      } */}
     </span>;
 };
 export default MyHiglighter;
