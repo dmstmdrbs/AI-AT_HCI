@@ -46,12 +46,12 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, 
       return (
         <span>
           {words.map((word, idx) => {
-            if (weightList[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
-            if (weightList[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
-            if (weightList[idx] > 0.01) return <YellowSpan>{word} </YellowSpan>;
-            else {
+            // if (weightList[idx] > 0.07) return <RedSpan>{word} </RedSpan>;
+            // if (weightList[idx] > 0.02) return <BlueSpan>{word} </BlueSpan>;
+            // if (weightList[idx] > 0.01) return <YellowSpan>{word} </YellowSpan>;
+            // else {
               return <span style={{marginBottom:'3px'}}>{word} </span>;
-            }
+            // }
           })}
         </span>
       );
