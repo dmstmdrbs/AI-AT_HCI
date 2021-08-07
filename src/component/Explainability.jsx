@@ -92,14 +92,14 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
   var heatmapInstance;
 
   useEffect(()=>{
-    console.log(attention);
+    // console.log(attention);
         
   },[])
   useEffect(() => {
     let arr =attention[8]['pdi_answer_att2'].slice(1,attention[8]['pdi_answer_att2'].length-1).split(', ');
     arr = arr.map(strNum=>Number(strNum)); 
     setAtt2Weight(arr);
-    console.log(arr);
+    // console.log(arr);
     setButton(true);
 
     if(attentionLevel==='1'){
@@ -111,14 +111,14 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
           
           let tokenizedWeight=att['tokenized_att'].slice(1,att['tokenized_att'].length-1).split(', ')
           tokenizedWeight = tokenizedWeight.map(item=>Number(item));
-          console.log(tokenized,tokenizedWeight);
+          // console.log(tokenized,tokenizedWeight);
           return {tokenized : tokenized, tokenizedWeight:tokenizedWeight}
         }
       })
       setAtt1Weight(arr);
     }
-    console.log(imageRef1);
-    console.log(imageRef2)
+    // console.log(imageRef1);
+    // console.log(imageRef2)
   }, [pdi]);
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
       if (attentionLevel==='1' && (clicked === null || clicked === 0 || clicked === 1))
         console.log('1번과 2번을 제외한 pdi를 선택해주세요');
       else {
-          console.log(`clicked : ${clicked}`);
+          // console.log(`clicked : ${clicked}`);
         if(clicked>=2 || attentionLevel==='2'){
           
           let pointsStr = attentionLevel==='1' ? attention[clicked-2]['image_att'] : attention[8]['image_att2'];
@@ -144,7 +144,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             });
             
             if(points.length===256){
-              console.log(points);
+              // console.log(points);
               heatmapInstance = h337.create({
                 container: attentionLevel==='1' ? document.querySelector('.heatmap') : document.querySelector('.heatmapLevel2'),
                 maxOpacity:radius===40 ? 0.65: (radius===45 ? 0.6 : 0.5),
@@ -180,7 +180,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     { setButton(!button);
       setButton(!button);
     }
-    console.log(att1Ref)
+    // console.log(att1Ref)
   }, [clicked]);
 
   const getClickedIdx = (idx) => {
