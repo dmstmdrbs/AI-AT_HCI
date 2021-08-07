@@ -70,12 +70,12 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
           
           let tokenizedWeight=att['tokenized_att'].slice(1,att['tokenized_att'].length-1).split(', ')
           tokenizedWeight = tokenizedWeight.map(item=>Number(item));
-          console.log(tokenized,tokenizedWeight);
+          // console.log(tokenized,tokenizedWeight);
           return {tokenized : tokenized, tokenizedWeight:tokenizedWeight}
         }
       })
       setToken(arr);
-      console.log(level1Ref);
+      // console.log(level1Ref);
     }
     if(attentionLevel==='2')
     {
@@ -128,10 +128,10 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
           <TokenContainer>
               {
                 token&&clicked>=2&&token[clicked-2]['tokenized'].map((item,idx)=>{
-                  console.log(item,idx)
+                  // console.log(item,idx)
                   return <>
                     <TokenText ref={level1Ref[idx]}>
-                      [{token[clicked-2]['tokenizedWeight'][idx]}] {item}
+                      [{(token[clicked-2]['tokenizedWeight'][idx]*100).toFixed(2)}%] {item}
                     </TokenText>
                   </>
                 })
