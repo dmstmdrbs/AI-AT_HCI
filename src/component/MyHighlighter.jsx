@@ -81,7 +81,7 @@ const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, 
   //   this is MyHiglighter <YellowSpan>in yellow span</YellowSpan> and{' '}
   //   <BlueSpan>in blue span</BlueSpan> and <RedSpan>in red span</RedSpan>. awesome
   // </p>
-  return <span id={attentionLevel==='1'? 'highlight1' : ''}>
+  return <span style={{fontSize:'1rem'}} id={attentionLevel==='1'? 'highlight1' : ''}>
       {marked}<br/>{attentionLevel==='1' ? <span>weight : {weight}</span> :<span></span>}
       {/* {attentionLevel==='1'&&
       <>

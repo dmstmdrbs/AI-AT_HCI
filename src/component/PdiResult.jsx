@@ -155,10 +155,10 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
                   <>
                   {attentionLevel==='2'&&att2 ?
                     idx-2 === att2.indexOf(att2.reduce((maxValue,currentValue)=>maxValue>currentValue ? maxValue : currentValue))
-                    ?<span id="highlight2">[weight : <span style={{color:'#f05650'}}>{att2[idx-2]}</span>]</span>
-                      :<span id="highlight2">[weight : {att2[idx-2]}] </span>
+                    ?<span id="highlight2" style={{fontSize:'1rem'}}>[weight : <span style={{fontSize:'1rem',color:'#f05650'}}>{(att2[idx-2]*100).toFixed(1)}%</span>]</span>
+                      :<span id="highlight2" style={{fontSize:'1rem'}}>[weight : {(att2[idx-2]*100).toFixed(1)}%] </span>
                         :<span></span>}
-                    {`${item} - `}
+                    <span style={{fontSize:'1rem'}}>{`${item} - `}</span>
                     <MyHiglighter
                       attentionLevel={attentionLevel}
                       sentence={`${pdi[item]}`}
@@ -170,7 +170,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention,attentionLevel, level1Ref,
                   </>
                 ) : (
                   <div>
-                    {`${item} - ${pdi[item]}`}<span style={{margin:'5px'}}></span>
+                    <span style={{fontSize:'1rem'}}>{`${item} - ${pdi[item]}`}<span style={{fontSize:'1rem', margin:'5px'}}></span></span>
                   </div>
                 )}
               </ListItem>
