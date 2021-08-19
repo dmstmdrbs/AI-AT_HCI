@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { nameState } from "../states/therapist";
+import testTypeState from "../states/testType";
 
 import { withStyles } from "@material-ui/core/styles";
 import { Tabs, Tab, Button, TextField } from "@material-ui/core";
@@ -45,6 +46,8 @@ const Header = styled.div`
 const Name = styled.div`
   margin-left: 30px;
 `;
+
+const Type = styled.div``;
 const Title = styled.div`
   cursor: pointer;
   display: flex;
@@ -113,6 +116,7 @@ axios.defaults.baseURL = "http://15.164.105.78:8000";
 const Contents = () => {
   const history = useHistory();
   const name = useRecoilValue(nameState);
+  const testType = useRecoilValue(testTypeState);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(null);
   const [error, setError] = useState(null);
@@ -334,6 +338,9 @@ const Contents = () => {
           <Name>
             <h2>{name} 님</h2>
           </Name>
+          {/* <Type>
+            <h3>Test {testType}</h3>
+          </Type> */}
           <Title>
             <h1>AI&AT</h1>
           </Title>
