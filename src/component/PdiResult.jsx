@@ -60,6 +60,7 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
   const pdiRef = useRef(null);
 
   useEffect(() => {
+    console.log(pdi);
     console.log(attention);
     if (attentionLevel === "1") {
       let arr = attention.map((att, idx) => {

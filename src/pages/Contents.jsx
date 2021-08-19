@@ -9,6 +9,8 @@ import testTypeState from "../states/testType";
 import { withStyles } from "@material-ui/core/styles";
 import { Tabs, Tab, Button, TextField } from "@material-ui/core";
 import Explainability from "../component/Explainability";
+import ModelInfo from "../component/ModelInfo";
+import AboutModel from "../component/AboutModel";
 import LoadingGif from "../assets/loading.gif";
 
 const Loading = styled.div`
@@ -71,7 +73,10 @@ const ExplainabilityContainer = styled.div`
   flex-direction: column;
   align-items: space-evenly;
 `;
-
+const ModelInfoContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 const ActionContainer = styled.div`
   display: flex;
 `;
@@ -400,7 +405,14 @@ const Contents = () => {
               attentionLevel="1"
             ></Explainability>
           </ExplainabilityContainer>
-
+          <ModelInfoContainer>
+            <AboutModel />
+            <ModelInfo
+              pdi={data[tab]}
+              modelPrediction={data[tab]["attention"][0]["prediction"]}
+              classified={data[tab]["gt"]}
+            ></ModelInfo>
+          </ModelInfoContainer>
           {/* <Test callback={loadExcel} /> */}
         </Content>
       </Container>

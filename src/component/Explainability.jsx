@@ -310,11 +310,11 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
         </ImageContainer>
 
         <PdiContainer>
-          <ModelInfo
+          {/* <ModelInfo
             pdi={pdi}
             modelPrediction={attention[0]["prediction"]}
             classified={pdi["gt"]}
-          ></ModelInfo>
+          ></ModelInfo> */}
           <PdiResult
             pdi={pdi}
             pdiIdx={pdiIdx}

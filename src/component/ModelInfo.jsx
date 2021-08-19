@@ -1,35 +1,24 @@
 import React from "react";
 import styled from "styled-components";
+import ModelConfidence from "./ModelConfidence";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
-const ModelInfoContainer = styled.div`
-  display: flex;
-  align-items: space-between;
-`;
+
 const Prediction = styled.div`
   text-align: center;
   margin-bottom: 20px;
-`;
-const Accuracy = styled.img`
-  margin: 10px;
-`;
-const Confidence = styled.img`
-  margin: 10px;
 `;
 
 const ModelInfo = ({ pdi, modelPrediction, classified }) => {
   // console.log(pdi["id"]);
   return (
     <Container>
-      <ModelInfoContainer>
-        <Accuracy src={`http://15.164.105.78:8000/accuracy}`} alt="model accuracy" />
-        <Confidence src={`15.164.105.78:8000/confidence/${pdi["id"]}`} alt="model confidence" />
-      </ModelInfoContainer>
       <Prediction>
+        <ModelConfidence />
         {modelPrediction === "no_stress" ? (
           <span>
             AI가{" "}
