@@ -148,14 +148,14 @@ const LoginForm = () => {
       <ButtonContainer>
         <Button
           onClick={() => {
-            submit("A");
+            submit("A"); //High precision : attention 일부 의도적으로 안보여줌.
           }}
         >
           test A
         </Button>
         <Button
           onClick={() => {
-            submit("B");
+            submit("B"); //High recall : attention 다 보여줌.
           }}
         >
           test B
