@@ -50,8 +50,12 @@ const Name = styled.div`
 const Type = styled.div``;
 const Title = styled.div`
   cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translate(-50%, 0);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
