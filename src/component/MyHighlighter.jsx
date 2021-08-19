@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const YellowSpan = styled.span`
-  color: rgb(240, 190, 80);
-  margin-bottom:3px;
-`;
-const BlueSpan = styled.span`
-  color: rgb(54, 93, 228);
-  margin-bottom:3px;
-`;
-const RedSpan = styled.span`
-  color: rgb(255, 66, 65);
-  margin-bottom:3px;
-`;
+// const YellowSpan = styled.span`
+//   color: rgb(240, 190, 80);
+//   margin-bottom:3px;
+// `;
+// const BlueSpan = styled.span`
+//   color: rgb(54, 93, 228);
+//   margin-bottom:3px;
+// `;
+// const RedSpan = styled.span`
+//   color: rgb(255, 66, 65);
+//   margin-bottom:3px;
+// `;
 
 const MyHiglighter = ({ sentence, weight, attentionLevel, token, tokenized_att, index }) => {
   const [marked, setMarked] = useState(null);
   const [flag, setFlag] = useState(true);
-  const [tokenized, setTokenized] = useState([]);
-  const [tokenizedAtt, setTokenizedAtt] = useState([]);
-  const [markedToken,setMarkedToken] = useState(null);
+  // const [tokenized, setTokenized] = useState([]);
+  // const [tokenizedAtt, setTokenizedAtt] = useState([]);
+  // const [markedToken,setMarkedToken] = useState(null);
   const [weightList, setWeightList] = useState([]);
   useEffect(()=>{
 

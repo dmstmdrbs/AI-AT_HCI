@@ -26,18 +26,19 @@ const ListItem = styled.button`
   cursor: pointer;
 `;
 
-const Button = styled.button`
-  width: 200px;
-  margin-top:20px;
-  align-self: center;
-  background-color:white;
-  border-radius:5px;
-  height:2rem;
-`;
+// const Button = styled.button`
+//   width: 200px;
+//   margin-top:20px;
+//   align-self: center;
+//   background-color:white;
+//   border-radius:5px;
+//   height:2rem;
+// `;
 
 const TokenContainer = styled.div`
   width:150px;
   margin-top:60px;
+  margin-left:50px;
   display:flex;
   flex-direction:column;
   text-align:start;

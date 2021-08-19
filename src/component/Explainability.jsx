@@ -134,7 +134,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
           // console.log(pointsStr.length);
           let pointsArr = pointsStr.slice(1,pointsStr.length-1).split(', ');
           let points = [];
-          pointsObj.map((item,idx)=>{
+          const tmp=pointsObj.map((item,idx)=>{
               let obj = item; 
               if(pointsArr[idx]*100>=1){
                 pointsArr[idx] = 0.0098;
@@ -187,7 +187,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
     setClicked(idx);
     // setButton(true);
     setButton(true);
-
+  
   };
 
   return (
@@ -255,7 +255,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             attentionLevel==='1'&&clicked>=2&&att1Weight&&
             att1Weight[clicked-2]['tokenized'].map((ref,idx)=>((
                                     <Xarrow
-                                      strokeWidth={att1Weight[clicked-2]['tokenizedWeight'][idx]*10}
+                                      strokeWidth={att1Weight[clicked-2]['tokenizedWeight'][idx]*15}
                                       showHead={false} 
                                       curveness="0" 
                                       start={att1Ref[idx]} 
@@ -265,7 +265,7 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
           <Xwrapper>
             {attentionLevel==='2'&&
             att2Weight&&att2Ref.map((ref,idx)=>(idx>=2?<Xarrow 
-                                                          strokeWidth={att2Weight[idx-2]*10} 
+                                                          strokeWidth={att2Weight[idx-2]*15} 
                                                           showHead={false} 
                                                           curveness="0" 
                                                           start={att2Ref[idx]} 

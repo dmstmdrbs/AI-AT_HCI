@@ -61,12 +61,12 @@ const Content = styled.div`
 
 const ExplainabilityContainer = styled.div`
   display: flex;
-  flex-direction:column;
-  align-items:space-evenly;
+  flex-direction: column;
+  align-items: space-evenly;
 `;
 
 const ActionContainer = styled.div`
-  display:flex;
+  display: flex;
 `;
 const StyledTabs = withStyles({
   indicator: {
@@ -98,12 +98,12 @@ const TabContainer = styled.div`
   background-color: #4d5e72;
 `;
 
-const allyProps=(index)=>{
-  return{
-    id:`scrollable-auto-tab-${index}`,
-    'aria-controls':`scrollable-auto-tabpanel-${index}`,
+const allyProps = (index) => {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    "aria-controls": `scrollable-auto-tabpanel-${index}`,
   };
-}
+};
 // navy-gray : 4d5e72;
 // light-navy : 3f6a8a
 
@@ -117,9 +117,7 @@ const Contents = () => {
   const [tab, setTab] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
-  const [search,setSearch] = useState('');
-
-
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -138,14 +136,16 @@ const Contents = () => {
       .then((list) => {
         // setIdList(list);
         return list;
-      }).then(list=>{
+      })
+      .then((list) => {
         //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]
         let pdis = [];
-        const fetchData = async (id,idx) => {
+        const fetchData = async (id, idx) => {
           try {
             setError(null);
             setData(null);
-            await axios.get(`/${id+1}`)
+            await axios
+              .get(`/${id + 1}`)
               .then((res) => {
                 const replaceInString = (fullString, search, replacement) => {
                   return fullString.split(search).join(replacement);
@@ -154,75 +154,69 @@ const Contents = () => {
                 return json;
               })
               .then(async (json) => {
-                
-                const fetchAttention = async (id,idx) => {
-                  let toSet = []; 
+                const fetchAttention = async (id, idx) => {
+                  let toSet = [];
                   /** attention = {imageAttention : [[],[],[],[],[],[],[],[],[]],
-                    * pdiAttention:[[],[],[],[],[],[],[],[],[]],
-                    * pdiAttention2:[]}
-                    */
+                   * pdiAttention:[[],[],[],[],[],[],[],[],[]],
+                   * pdiAttention2:[]}
+                   */
                   axios.get(`/att/${id}`).then((res) => {
                     let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
                     // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
                     let arr = list.split("},{");
-                    
-                    arr.map((item) => {
-                
+
+                    const tmp = arr.map((item) => {
                       //attention parsing
-                      let tokenized='';
-                      let obj={};
-                      let len=item.split('\", ').length;
-                      item.split('\", ').map((str,idx)=>{
+                      let tokenized = "";
+                      let obj = {};
+                      let len = item.split('", ').length;
+                      item.split('", ').map((str, idx) => {
                         let item;
                         let key;
                         let value;
-                        if(idx===0){
-                          item = str.slice(1,str.length);
+                        if (idx === 0) {
+                          item = str.slice(1, str.length);
                           key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g,'');
+                          key = key.replaceAll(/\"/g, "");
                           value = item.split(": ")[1];
-                          value = value.replace(/"/,'');
-                          obj[key]=value;
-                        }
-                        else if(idx<7&&idx>0){
+                          value = value.replace(/"/, "");
+                          obj[key] = value;
+                        } else if (idx < 7 && idx > 0) {
                           item = str;
                           key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g,'');
+                          key = key.replaceAll(/\"/g, "");
                           value = item.split(": ")[1];
-                          value = value.replace(/"/,'');
-                          obj[key]=value;
-                        }
-                        else if(idx>=7 && idx<len-1){
-                          
-                          if(idx===len-2) tokenized+=str
-                          else tokenized+=str+'", ';
+                          value = value.replace(/"/, "");
+                          obj[key] = value;
+                        } else if (idx >= 7 && idx < len - 1) {
+                          if (idx === len - 2) tokenized += str;
+                          else tokenized += str + '", ';
 
-                          if(idx===len-2){                        
-                            key = tokenized.split(": ")[0]
-                            key = key.replaceAll(/\"/g,'');
+                          if (idx === len - 2) {
+                            key = tokenized.split(": ")[0];
+                            key = key.replaceAll(/\"/g, "");
                             value = tokenized.split(": ")[1];
-                            value = value.replace(/"/,'');
-                            value = value.replace(/\",\"/,'');
-                            if(value[value.length-1]==='\"'){
-                              value = value.substring(0,value.length-1);
+                            value = value.replace(/"/, "");
+                            value = value.replace(/\",\"/, "");
+                            if (value[value.length - 1] === '"') {
+                              value = value.substring(0, value.length - 1);
                             }
-                            obj[key]=value;
+                            obj[key] = value;
                           }
-                        }
-                        else if(idx===len-1){
-                          item = str.slice(0,str.length-1);
+                        } else if (idx === len - 1) {
+                          item = str.slice(0, str.length - 1);
                           key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g,'');
+                          key = key.replaceAll(/\"/g, "");
                           value = item.split(": ")[1];
-                          value = value.replace(/"/,'');
-                          if(value[value.length-1]==='\"'){
-                            value = value.substring(0,value.length-1);
+                          value = value.replace(/"/, "");
+                          if (value[value.length - 1] === '"') {
+                            value = value.substring(0, value.length - 1);
                           }
-                          obj[key]=value;
-                        }              
-                      })
-                      
-                      toSet.push(JSON.parse(JSON.stringify(obj)))
+                          obj[key] = value;
+                        }
+                      });
+
+                      toSet.push(JSON.parse(JSON.stringify(obj)));
                       /**
                        * 0 image_att
                        * 1 image_att2
@@ -236,7 +230,6 @@ const Contents = () => {
                        * length-1 tokenized_att
                        */
 
-
                       // tokenized = tokenized.slice(1,tokenized.length-1).replace(/\'/g,'').split(', ');
                       // console.log(JSON.stringify(tokenized));
                       // item['tokenized'] = JSON.stringify(tokenized);
@@ -246,20 +239,18 @@ const Contents = () => {
                       // item['tokenized_att'] = tokenAtt;
 
                       // console.log(JSON.parse(JSON.stringify(item)));
-                   
-                   
-                   
+
                       // console.log(item);
                       // console.log(typeof item);
                       // console.log(JSON.parse(item));
                       // console.log(JSON.parse(JSON.stringify(item)));
                       // toSet.push(JSON.parse(item));
                     });
-                    json['attention'] = toSet;
+                    json["attention"] = toSet;
                     pdis.push(json);
-                  })
+                  });
                 };
-                await fetchAttention(id,idx);
+                await fetchAttention(id, idx);
                 // console.log(pdis);
                 setData(pdis);
               });
@@ -269,10 +260,9 @@ const Contents = () => {
         };
 
         const loopFetch = async (CASE_NUM) => {
-          
           for (let caseNum = 0; caseNum < CASE_NUM; caseNum++) {
             try {
-              await fetchData(list[caseNum],caseNum);
+              await fetchData(list[caseNum], caseNum);
               //   console.log(data);
             } catch (e) {
               setError(e);
@@ -309,25 +299,25 @@ const Contents = () => {
     setSearch(event.target.value);
   };
 
-  const searchCase =()=>{
-    if(search.length>0){
+  const searchCase = () => {
+    if (search.length > 0) {
       // console.log(search);
       // console.log(data[50]);
-      
+
       let found;
-      data.map((item,idx)=>{
-        if(item['image_name'].includes(search)){
+      data.map((item, idx) => {
+        if (item["image_name"].includes(search)) {
           setTab(idx);
-          found=item;
-        } 
-      })
+          found = item;
+        }
+      });
       // console.log(found);
-      if(found===undefined){
-        alert('찾는 케이스가 없습니다');
+      if (found === undefined) {
+        alert("찾는 케이스가 없습니다");
       }
-      setSearch('');
+      setSearch("");
     }
-  }
+  };
 
   if (loading)
     return (
@@ -348,9 +338,18 @@ const Contents = () => {
             <h1>AI&AT</h1>
           </Title>
           <ActionContainer>
-            <TextField value={search} id="search-image" label="Search image id" variant="outlined" placeholder="00004_pitr_010106.jpg" onChange={handleSearchChange}/>
-            <Button variant="outlined" onClick={searchCase} style={{margin:'10px'}}>검색</Button>
-            <Button variant="outlined" onClick={logout} style={{margin:'10px'}}>
+            <TextField
+              value={search}
+              id="search-image"
+              label="Search image id"
+              variant="outlined"
+              placeholder="00004_pitr_010106.jpg"
+              onChange={handleSearchChange}
+            />
+            <Button variant="outlined" onClick={searchCase} style={{ margin: "10px" }}>
+              검색
+            </Button>
+            <Button variant="outlined" onClick={logout} style={{ margin: "10px" }}>
               완료
             </Button>
           </ActionContainer>
@@ -369,19 +368,25 @@ const Contents = () => {
                 <StyledTab
                   key={data[idx - 1]["id"]}
                   label={`Case ${idx}`}
-                  {...allyProps(idx)}></StyledTab>
+                  {...allyProps(idx)}
+                ></StyledTab>
               );
             })}
           </StyledTabs>
-        </TabContainer>   
+        </TabContainer>
         <Content>
           <ExplainabilityContainer>
-            <Explainability pdi={data[tab]} pdiIdx={tab} attention={data[tab]['attention']} attentionLevel='2'></Explainability>
             <Explainability
               pdi={data[tab]}
               pdiIdx={tab}
-              attention={data[tab]['attention']}
-              attentionLevel='1'
+              attention={data[tab]["attention"]}
+              attentionLevel="2"
+            ></Explainability>
+            <Explainability
+              pdi={data[tab]}
+              pdiIdx={tab}
+              attention={data[tab]["attention"]}
+              attentionLevel="1"
             ></Explainability>
           </ExplainabilityContainer>
 
