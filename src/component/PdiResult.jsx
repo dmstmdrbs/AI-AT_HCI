@@ -26,7 +26,7 @@ const ListItem = styled.button`
   min-width: ;
   text-align: start;
   background-color: ${(props) => (props.clicked === props.idx ? "#d1d1d1" : "#ffffff")};
-  cursor: pointer;
+  cursor: ${(props) => (props.attentionLevel === "1" ? (props.idx >= 2 ? "pointer" : "") : "")};
 `;
 
 // const Button = styled.button`
@@ -154,11 +154,13 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
               primary={`${item} - ${pdi[item]}`}
               clicked={clicked}
               idx={idx}
+              attentionLevel={attentionLevel}
               onClick={() => {
                 //TODO : testType === 'A' ? 0 : 클릭 무반응, 1: 기존처럼 클릭
                 //if (attentionLevel === "1") clicked === idx ? setClicked(null) : (testType==='A' ? setClicked(null) : setClicked(idx);
 
-                if (attentionLevel === "1") clicked === idx ? setClicked(null) : setClicked(idx);
+                if (attentionLevel === "1" && idx >= 2)
+                  clicked === idx ? setClicked(null) : setClicked(idx);
               }}
             >
               {idx >= 2 ? (
