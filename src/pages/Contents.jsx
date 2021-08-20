@@ -10,7 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Tabs, Tab, Button, TextField } from "@material-ui/core";
 import Explainability from "../component/Explainability";
 import ModelInfo from "../component/ModelInfo";
-import AboutModel from "../component/AboutModel";
+import AccuracyInfo from "../component/AccuracyInfo";
 import LoadingGif from "../assets/loading.gif";
 
 const Loading = styled.div`
@@ -33,6 +33,7 @@ const Error = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 1500px;
 `;
 
 const Header = styled.div`
@@ -64,7 +65,7 @@ const Title = styled.div`
 const Content = styled.div`
   display: flex;
   padding: 10px;
-  align-items: center;
+  margin-left: 200px;
   justify-items: center;
 `;
 
@@ -72,10 +73,15 @@ const ExplainabilityContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: space-evenly;
+  margin-right: 50px;
 `;
 const ModelInfoContainer = styled.div`
+  position: fixed;
+  right: 5%;
+  top: 250px;
+  text-align: center;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 const ActionContainer = styled.div`
   display: flex;
@@ -406,7 +412,7 @@ const Contents = () => {
             ></Explainability>
           </ExplainabilityContainer>
           <ModelInfoContainer>
-            <AboutModel />
+            <AccuracyInfo accuracy={80.6} />
             <ModelInfo
               pdi={data[tab]}
               modelPrediction={data[tab]["attention"][0]["prediction"]}

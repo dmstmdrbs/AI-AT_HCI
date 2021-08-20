@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import ModelConfidence from "./ModelConfidence";
+import ModelConfidence from "./GaugeChart";
 
 const Container = styled.div`
   display: flex;
@@ -17,8 +17,15 @@ const ModelInfo = ({ pdi, modelPrediction, classified }) => {
   // console.log(pdi["id"]);
   return (
     <Container>
+      <ModelConfidence
+        chartId="confidence"
+        firstColor="#34ef85"
+        secondColor="#e8e8e8"
+        leftLabel="Low Confidence"
+        rightLabel="High Confidence"
+        gaugeValue={70}
+      />
       <Prediction>
-        <ModelConfidence />
         {modelPrediction === "no_stress" ? (
           <span>
             AI가{" "}
