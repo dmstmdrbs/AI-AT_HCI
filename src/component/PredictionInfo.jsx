@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ModelConfidence from "./GaugeChart";
 
 const Container = styled.div`
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,10 +14,14 @@ const Prediction = styled.div`
   margin-bottom: 20px;
 `;
 
-const ModelInfo = ({ pdi, modelPrediction, classified }) => {
+const PredictionText = styled.span`
+  font-size: 1.2rem;
+`;
+const PredictionInfo = ({ pdi, modelPrediction, classified }) => {
   // console.log(pdi["id"]);
   return (
     <Container>
+      <h2>본 테스트에 대한 AI의 진단 예측</h2>
       <ModelConfidence
         chartId="confidence"
         firstColor="#34ef85"
@@ -27,7 +32,7 @@ const ModelInfo = ({ pdi, modelPrediction, classified }) => {
       />
       <Prediction>
         {modelPrediction === "no_stress" ? (
-          <span>
+          <PredictionText>
             AI가{" "}
             {/* {classified === "no_stress" ? (
               <span>
@@ -39,9 +44,9 @@ const ModelInfo = ({ pdi, modelPrediction, classified }) => {
               </span>
             )} */}
             '<strong>스트레스가 없다</strong>'고 분류하였습니다.
-          </span>
+          </PredictionText>
         ) : (
-          <span>
+          <PredictionText>
             AI가{" "}
             {/* {classified === "no_stress" ? (
               <span>
@@ -53,11 +58,11 @@ const ModelInfo = ({ pdi, modelPrediction, classified }) => {
               </span>
             )}{" "} */}
             '<strong>스트레스가 있다</strong>'고 분류하였습니다.
-          </span>
+          </PredictionText>
         )}
       </Prediction>
       {/* <Confidence src={`http://15.164.105.78:8000/confidence/${pdi["id"]}`} alt="model confidence" /> */}
     </Container>
   );
 };
-export default ModelInfo;
+export default PredictionInfo;

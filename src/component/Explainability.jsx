@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import h337 from "heatmap.js";
 
 import PdiResult from "./PdiResult";
-import ModelInfo from "./ModelInfo";
+import PredictionInfo from "./PredictionInfo";
 import { pointsObj } from "./points";
 
 const Container = styled.div`
@@ -48,6 +48,7 @@ const PdiContainer = styled.div`
   display: flex;
   min-height: 512px;
   flex-direction: column;
+  justify-content: center;
   overflow-y: scroll;
   &::-webkit-scrollbar {
     width: 8px;

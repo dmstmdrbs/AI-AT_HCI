@@ -25,7 +25,7 @@ const AccuracyInfo = ({ accuracy }) => {
   return (
     <Container>
       {/* <Accuracy src={`http://15.164.105.78:8000/accuracy}`} alt="model accuracy" /> */}
-      <p>AI의 정확도 : {accuracy}%</p>
+      <h2>AI의 정확도 : {accuracy}%</h2>
       <ModelConfidence
         chartId="accuracy"
         firstColor="#6ea6f4"
