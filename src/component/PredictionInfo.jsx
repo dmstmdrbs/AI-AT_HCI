@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ModelConfidence from "./GaugeChart";
 
 const Container = styled.div`
-  margin-top: 100px;
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -34,6 +34,10 @@ const AccuracyInfo = ({ accuracy }) => {
         rightLabel=""
         gaugeValue={80.3}
       />
+      <p style={{ textAlign: "left" }}>
+        <h4>AI의 정확도란?</h4>
+        <span>AI가 10개의 검사 결과를 보았을 때 약 8개를 맞출 수 있습니다.</span>
+      </p>
       {/* <ModelAccuracy /> */}
 
       {/* <Confidence src={`15.164.105.78:8000/confidence/${pdi["id"]}`} alt="model confidence" /> */}

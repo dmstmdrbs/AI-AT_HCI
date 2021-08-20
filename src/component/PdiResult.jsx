@@ -40,11 +40,11 @@ const ListItem = styled.button`
 
 const TokenContainer = styled.div`
   width: 150px;
-  margin-top: 60px;
   margin-left: 50px;
   display: flex;
   flex-direction: column;
   text-align: start;
+  justify-content: center;
 `;
 const TokenText = styled.span`
   margin: 5px;

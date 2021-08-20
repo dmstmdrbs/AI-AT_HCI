@@ -77,8 +77,8 @@ const ExplainabilityContainer = styled.div`
 `;
 const ModelInfoContainer = styled.div`
   position: fixed;
-  right: 5%;
-  top: 220px;
+  right: 4%;
+  top: 200px;
   text-align: center;
   display: flex;
   flex-direction: column;

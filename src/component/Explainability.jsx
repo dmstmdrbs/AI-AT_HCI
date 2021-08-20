@@ -333,8 +333,11 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
             att1Weight[clicked - 2]["tokenized"].map((ref, idx) => (
               <Xarrow
                 strokeWidth={att1Weight[clicked - 2]["tokenizedWeight"][idx] * 15}
-                showHead={false}
-                curveness="0"
+                showHead={true}
+                headSize={2}
+                curveness="0.2"
+                lineColor="#4a6fe4"
+                headColor="#4a6fe4"
                 start={att1Ref[idx]}
                 end={imageRef1}
               />
@@ -347,10 +350,13 @@ const Explainability = ({ pdi, pdiIdx, attention, attentionLevel }) => {
               idx >= 2 ? (
                 <Xarrow
                   strokeWidth={att2Weight[idx - 2] * 15}
-                  showHead={false}
-                  curveness="0"
+                  showHead={true}
+                  headSize={2}
+                  curveness="0.2"
                   start={att2Ref[idx]}
                   end={imageRef2}
+                  lineColor="#4a6fe4"
+                  headColor="#4a6fe4"
                 />
               ) : null,
             )}
