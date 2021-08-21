@@ -65,7 +65,7 @@ const Title = styled.div`
 const Content = styled.div`
   display: flex;
   padding: 10px;
-  margin-left: 200px;
+  margin-left: 50px;
   justify-items: center;
 `;
 
@@ -76,12 +76,14 @@ const ExplainabilityContainer = styled.div`
   margin-right: 50px;
 `;
 const ModelInfoContainer = styled.div`
-  position: fixed;
-  right: 4%;
-  top: 200px;
+  // position: fixed;
+  // right: 4%;
+  // top: 200px;
   text-align: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 const ActionContainer = styled.div`
   display: flex;
@@ -145,7 +147,7 @@ const Contents = () => {
     // then.(2. 각 server id 별 pdi, -> contents 컴포넌트)
     // 3. server id 별 pdi attention, image attention => explainability 컴포넌트
     axios
-      .get("/idlist")
+      .get("/idlist_selected")
       .then((res) => {
         let str = res.data.slice(1, res.data.length - 1);
         let list = str.split(", ").map((x) => parseInt(x));
@@ -160,6 +162,7 @@ const Contents = () => {
         //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]
         let pdis = [];
         const fetchData = async (id, idx) => {
+          console.log(id);
           try {
             setError(null);
             setData(null);

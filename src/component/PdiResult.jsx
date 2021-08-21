@@ -9,6 +9,7 @@ const Container = styled.div`
   display: flex;
   position: relative;
   box-shadow: 1px 1px 2px 1px #dadce0;
+  max-width: 700px;
 `;
 const PdiList = styled.ul`
   list-style: none;
