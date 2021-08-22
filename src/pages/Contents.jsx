@@ -49,7 +49,6 @@ const Header = styled.div`
 const Name = styled.div`
   position: absolute;
   margin-left: 150px;
-  width: 100px;
 `;
 
 const Type = styled.div`
@@ -153,17 +152,20 @@ const Contents = () => {
     axios
       .get("/idlist_selected")
       .then((res) => {
-        let str = res.data.slice(1, res.data.length - 1);
-        let list = str.split(", ").map((x) => parseInt(x));
-        list.sort((a, b) => parseInt(a) - parseInt(b));
-        return list;
+        console.log(res.data);
+        // let str = res.data.slice(1, res.data.length - 1);
+        // let list = str.split(", ").map((x) => parseInt(x));
+        // list.sort((a, b) => parseInt(a) - parseInt(b));
+        return res.data;
       })
       .then((list) => {
         // setIdList(list);
+        // let test = [3, 28, 66, 504, 525, 33, 948, 640];
         return list;
       })
       .then((list) => {
-        //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]
+        //list -> 3,28,66,504,525,33,948,640
+
         let pdis = [];
         const fetchData = async (id, idx) => {
           console.log(id);
@@ -182,10 +184,6 @@ const Contents = () => {
               .then(async (json) => {
                 const fetchAttention = async (id, idx) => {
                   let toSet = [];
-                  /** attention = {imageAttention : [[],[],[],[],[],[],[],[],[]],
-                   * pdiAttention:[[],[],[],[],[],[],[],[],[]],
-                   * pdiAttention2:[]}
-                   */
                   axios
                     .get(`/att/${id}`)
                     .then((res) => {
@@ -400,7 +398,7 @@ const Contents = () => {
               modelPrediction={data[tab]["attention"][0]["prediction"]}
               classified={data[tab]["gt"]}
               // confidence={data[tab]['confidence']}
-              confidence={68}
+              confidence={(data[tab]["confidence"] * 100).toFixed(1)}
             ></PredictionInfo>
           </ModelInfoContainer>
           {/* <Test callback={loadExcel} /> */}

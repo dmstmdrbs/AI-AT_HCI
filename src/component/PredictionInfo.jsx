@@ -18,7 +18,7 @@ const PredictionText = styled.span`
   font-size: 1.2rem;
 `;
 const PredictionInfo = ({ pdi, modelPrediction, classified, confidence }) => {
-  // console.log(pdi["id"]);
+  console.log(confidence);
   return (
     <Container>
       <h2>본 테스트에 대한 AI의 진단 예측</h2>

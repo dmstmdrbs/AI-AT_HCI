@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -48,6 +48,14 @@ const Button = styled.button`
   background-color: #7d95b9;
   cursor: pointer;
 `;
+const ErrorText = styled.span`
+  align-items: flex-start;
+  width: 100%;
+  height: 20px;
+  margin-bottom: 10px;
+  line-height: 20px;
+  color: #e84118;
+`;
 const Logo = styled.img`
   padding-top: 30px;
 `;
@@ -57,6 +65,8 @@ const LoginForm = () => {
   const [name, setName] = useRecoilState(nameState);
   const [phone, setPhone] = useRecoilState(phoneState);
   const [email, setEmail] = useRecoilState(emailState);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
   const [testType, setTestType] = useRecoilState(testTypeState);
 
   useEffect(() => {
@@ -91,7 +101,7 @@ const LoginForm = () => {
 
   return (
     <Container>
-      <h1>TESTER</h1>
+      <h1>테스터 정보 입력</h1>
       <Form>
         <InputContainer>
           <Grid container spacing={3} alignItems="flex-end">

@@ -132,68 +132,70 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
             })}
         </TokenContainer>
       )}
-      <PdiList>
-        {pitrQ.map((item, idx) => {
-          return (
-            <ListItem
-              key={idx}
-              ref={idx >= 2 ? level2Ref[idx] : null}
-              id={idx >= 2 ? level2Ref[idx].id : null}
-              primary={`${item} - ${pdi[item]}`}
-              clicked={clicked}
-              idx={idx}
-              valid={
-                testType === "B"
-                  ? true
-                  : testType === "A" && att2[idx - 2] * 100 < 12.5
-                  ? false
-                  : true
-              }
-              attentionLevel={attentionLevel}
-              onClick={() => {
-                //TODO : testType === 'A' ? 0 : 클릭 무반응, 1: 기존처럼 클릭
-                //if (attentionLevel === "1") clicked === idx ? setClicked(null) : (testType==='A' ? setClicked(null) : setClicked(idx);
+      {att2 && (
+        <PdiList>
+          {pitrQ.map((item, idx) => {
+            return (
+              <ListItem
+                key={idx}
+                ref={idx >= 2 ? level2Ref[idx] : null}
+                id={idx >= 2 ? level2Ref[idx].id : null}
+                primary={`${item} - ${pdi[item]}`}
+                clicked={clicked}
+                idx={idx}
+                valid={
+                  testType === "B"
+                    ? true
+                    : testType === "A" && idx >= 2 && att2[idx - 2] * 100 >= 12.5
+                    ? true
+                    : false
+                }
+                attentionLevel={attentionLevel}
+                onClick={() => {
+                  //TODO : testType === 'A' ? 0 : 클릭 무반응, 1: 기존처럼 클릭
+                  //if (attentionLevel === "1") clicked === idx ? setClicked(null) : (testType==='A' ? setClicked(null) : setClicked(idx);
 
-                if (attentionLevel === "1" && idx >= 2)
-                  if (testType === "A" && att2[idx - 2] * 100 < 12.5) {
-                    console.log("none");
-                  } else {
-                    clicked === idx ? setClicked(null) : setClicked(idx);
-                  }
-              }}
-            >
-              {idx >= 2 ? (
-                <>
-                  {attentionLevel === "1" && att2 ? (
-                    <span style={{ fontSize: "1rem" }}>{`[${(att2[idx - 2] * 100).toFixed(
-                      1,
-                    )}%]`}</span>
-                  ) : (
-                    <></>
-                  )}
+                  if (attentionLevel === "1" && idx >= 2)
+                    if (testType === "A" && att2[idx - 2] * 100 < 12.5) {
+                      console.log("none");
+                    } else {
+                      clicked === idx ? setClicked(null) : setClicked(idx);
+                    }
+                }}
+              >
+                {idx >= 2 ? (
+                  <>
+                    {attentionLevel === "1" && att2 ? (
+                      <span style={{ fontSize: "1rem" }}>{`[${(att2[idx - 2] * 100).toFixed(
+                        1,
+                      )}%]`}</span>
+                    ) : (
+                      <></>
+                    )}
 
-                  <span style={{ fontSize: 16 }}> {item} - </span>
-                  <MyHiglighter
-                    attentionLevel={attentionLevel}
-                    sentence={`${pdi[item]}`}
-                    weight={attention[idx - 2]["pdi_att_token"]}
-                    token={attention[idx - 2]["tokenized"]}
-                    tokenized_att={attention[idx - 2]["tokenized_att"]}
-                    index={idx - 2}
-                  />
-                </>
-              ) : (
-                <div>
-                  <span style={{ fontSize: "1rem" }}>
-                    {`${item} - ${pdi[item]}`}
-                    <span style={{ fontSize: "1rem", margin: "5px" }}></span>
-                  </span>
-                </div>
-              )}
-            </ListItem>
-          );
-        })}
-      </PdiList>
+                    <span style={{ fontSize: 16 }}> {item} - </span>
+                    <MyHiglighter
+                      attentionLevel={attentionLevel}
+                      sentence={`${pdi[item]}`}
+                      weight={attention[idx - 2]["pdi_att_token"]}
+                      token={attention[idx - 2]["tokenized"]}
+                      tokenized_att={attention[idx - 2]["tokenized_att"]}
+                      index={idx - 2}
+                    />
+                  </>
+                ) : (
+                  <div>
+                    <span style={{ fontSize: "1rem" }}>
+                      {`${item} - ${pdi[item]}`}
+                      <span style={{ fontSize: "1rem", margin: "5px" }}></span>
+                    </span>
+                  </div>
+                )}
+              </ListItem>
+            );
+          })}
+        </PdiList>
+      )}
     </Container>
   );
 };
