@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import axios from 'axios';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import { AccountCircle, MailOutlined, Phone } from '@material-ui/icons/';
-import { nameState, phoneState, emailState } from '../states/therapist';
-import hciLogo from '../assets/hci.png';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useHistory } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import axios from "axios";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import { AccountCircle, MailOutlined, Phone } from "@material-ui/icons/";
+import { nameState, phoneState, emailState } from "../states/therapist";
+import testTypeState from "../states/testType";
+import hciLogo from "../assets/hci.png";
 
 const Container = styled.div`
   display: flex;
@@ -31,18 +32,29 @@ const InputContainer = styled.div`
   flex: 1;
   align-items: center;
 `;
+
+const ButtonContainer = styled.div``;
 const Button = styled.button`
   align-self: center;
-  border-radius: 115px;
-  width: 300px;
+  border-radius: 40px;
+  width: 100px;
   margin-top: 1em;
   border: 1px solid;
   padding: 1em 2em;
+  margin: 10px;
   background: none;
   font-size: 18px;
   color: white;
   background-color: #7d95b9;
   cursor: pointer;
+`;
+const ErrorText = styled.span`
+  align-items: flex-start;
+  width: 100%;
+  height: 20px;
+  margin-bottom: 10px;
+  line-height: 20px;
+  color: #e84118;
 `;
 const Logo = styled.img`
   padding-top: 30px;
@@ -53,38 +65,43 @@ const LoginForm = () => {
   const [name, setName] = useRecoilState(nameState);
   const [phone, setPhone] = useRecoilState(phoneState);
   const [email, setEmail] = useRecoilState(emailState);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
+  const [testType, setTestType] = useRecoilState(testTypeState);
 
   useEffect(() => {
-    setName('');
-    setPhone('');
-    setEmail('');
+    setName("");
+    setPhone("");
+    setEmail("");
   }, []);
 
-  const submit = async () => {
+  const submit = async (testType) => {
     if (name && phone && email) {
+      setTestType(testType);
       await axios
-        .post('http://15.164.105.78:8000/login/', {
+        .post("http://15.164.105.78:8000/login/", {
           Name: name,
           Email: email,
           Phone: phone,
+          //test:testType,
         })
         .then(
           (res) => {
             // console.log(res);
-            history.push('/contents');
+            history.push("/contents");
           },
           (error) => {
             console.log(error);
           },
         );
     } else {
-      alert('정보를 입력해주세요');
+      alert("정보를 입력해주세요");
     }
   };
 
   return (
     <Container>
-      <h1>LOGIN</h1>
+      <h1>테스터 정보 입력</h1>
       <Form>
         <InputContainer>
           <Grid container spacing={3} alignItems="flex-end">
@@ -138,7 +155,22 @@ const LoginForm = () => {
           </Grid>
         </InputContainer>
       </Form>
-      <Button onClick={submit}>확인</Button>
+      <ButtonContainer>
+        <Button
+          onClick={() => {
+            submit("A"); //High precision : attention 일부 의도적으로 안보여줌.
+          }}
+        >
+          test A
+        </Button>
+        <Button
+          onClick={() => {
+            submit("B"); //High recall : attention 다 보여줌.
+          }}
+        >
+          test B
+        </Button>
+      </ButtonContainer>
       <Logo src={hciLogo} alt="logo" />
     </Container>
   );

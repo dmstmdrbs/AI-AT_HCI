@@ -1,13 +1,16 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import { nameState } from "../states/therapist";
+import testTypeState from "../states/testType";
 
 import { withStyles } from "@material-ui/core/styles";
 import { Tabs, Tab, Button, TextField } from "@material-ui/core";
 import Explainability from "../component/Explainability";
+import PredictionInfo from "../component/PredictionInfo";
+import AccuracyInfo from "../component/AccuracyInfo";
 import LoadingGif from "../assets/loading.gif";
 
 const Loading = styled.div`
@@ -30,6 +33,7 @@ const Error = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 1500px;
 `;
 
 const Header = styled.div`
@@ -43,19 +47,28 @@ const Header = styled.div`
 // lightgray : #e6e9ed;
 //
 const Name = styled.div`
+  position: absolute;
+  margin-left: 150px;
+`;
+
+const Type = styled.div`
   margin-left: 30px;
 `;
 const Title = styled.div`
   cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translate(-50%, 0);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
 const Content = styled.div`
   display: flex;
   padding: 10px;
-  align-items: center;
+  margin-left: 50px;
   justify-items: center;
 `;
 
@@ -63,8 +76,18 @@ const ExplainabilityContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: space-evenly;
+  margin-right: 50px;
 `;
-
+const ModelInfoContainer = styled.div`
+  position: fixed;
+  right: 10px;
+  top: 200px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 const ActionContainer = styled.div`
   display: flex;
 `;
@@ -113,34 +136,39 @@ axios.defaults.baseURL = "http://15.164.105.78:8000";
 const Contents = () => {
   const history = useHistory();
   const name = useRecoilValue(nameState);
+  const testType = useRecoilValue(testTypeState);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLoading(true);
     //첫 로딩
     // 1. case 개수 or server id list -> contents컴포넌트
     // then.(2. 각 server id 별 pdi, -> contents 컴포넌트)
     // 3. server id 별 pdi attention, image attention => explainability 컴포넌트
     axios
-      .get("/idlist")
+      .get("/idlist_selected")
       .then((res) => {
-        let str = res.data.slice(1, res.data.length - 1);
-        let list = str.split(", ").map((x) => parseInt(x));
-        list.sort((a, b) => parseInt(a) - parseInt(b));
-        return list;
+        console.log(res.data);
+        // let str = res.data.slice(1, res.data.length - 1);
+        // let list = str.split(", ").map((x) => parseInt(x));
+        // list.sort((a, b) => parseInt(a) - parseInt(b));
+        return res.data;
       })
       .then((list) => {
         // setIdList(list);
+        // let test = [3, 28, 66, 504, 525, 33, 948, 640];
         return list;
       })
       .then((list) => {
-        //list -> [24,52,324,12,4,53,2,,41,3,5,6,56]
+        //list -> 3,28,66,504,525,33,948,640
+
         let pdis = [];
         const fetchData = async (id, idx) => {
+          console.log(id);
           try {
             setError(null);
             setData(null);
@@ -156,103 +184,75 @@ const Contents = () => {
               .then(async (json) => {
                 const fetchAttention = async (id, idx) => {
                   let toSet = [];
-                  /** attention = {imageAttention : [[],[],[],[],[],[],[],[],[]],
-                   * pdiAttention:[[],[],[],[],[],[],[],[],[]],
-                   * pdiAttention2:[]}
-                   */
-                  axios.get(`/att/${id}`).then((res) => {
-                    let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
-                    // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
-                    let arr = list.split("},{");
+                  axios
+                    .get(`/att/${id}`)
+                    .then((res) => {
+                      let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
+                      // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
+                      let arr = list.split("},{");
 
-                    const tmp = arr.map((item) => {
-                      //attention parsing
-                      let tokenized = "";
-                      let obj = {};
-                      let len = item.split('", ').length;
-                      item.split('", ').map((str, idx) => {
-                        let item;
-                        let key;
-                        let value;
-                        if (idx === 0) {
-                          item = str.slice(1, str.length);
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          obj[key] = value;
-                        } else if (idx < 7 && idx > 0) {
-                          item = str;
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          obj[key] = value;
-                        } else if (idx >= 7 && idx < len - 1) {
-                          if (idx === len - 2) tokenized += str;
-                          else tokenized += str + '", ';
-
-                          if (idx === len - 2) {
-                            key = tokenized.split(": ")[0];
+                      const tmp = arr.map((item) => {
+                        //attention parsing
+                        let tokenized = "";
+                        let obj = {};
+                        let len = item.split('", ').length;
+                        item.split('", ').map((str, idx) => {
+                          let item;
+                          let key;
+                          let value;
+                          if (idx === 0) {
+                            item = str.slice(1, str.length);
+                            key = item.split(": ")[0];
                             key = key.replaceAll(/\"/g, "");
-                            value = tokenized.split(": ")[1];
+                            value = item.split(": ")[1];
                             value = value.replace(/"/, "");
-                            value = value.replace(/\",\"/, "");
+                            obj[key] = value;
+                          } else if (idx < 7 && idx > 0) {
+                            item = str;
+                            key = item.split(": ")[0];
+                            key = key.replaceAll(/\"/g, "");
+                            value = item.split(": ")[1];
+                            value = value.replace(/"/, "");
+                            obj[key] = value;
+                          } else if (idx >= 7 && idx < len - 1) {
+                            if (idx === len - 2) tokenized += str;
+                            else tokenized += str + '", ';
+
+                            if (idx === len - 2) {
+                              key = tokenized.split(": ")[0];
+                              key = key.replaceAll(/\"/g, "");
+                              value = tokenized.split(": ")[1];
+                              value = value.replace(/"/, "");
+                              value = value.replace(/\",\"/, "");
+                              if (value[value.length - 1] === '"') {
+                                value = value.substring(0, value.length - 1);
+                              }
+                              obj[key] = value;
+                            }
+                          } else if (idx === len - 1) {
+                            item = str.slice(0, str.length - 1);
+                            key = item.split(": ")[0];
+                            key = key.replaceAll(/\"/g, "");
+                            value = item.split(": ")[1];
+                            value = value.replace(/"/, "");
                             if (value[value.length - 1] === '"') {
                               value = value.substring(0, value.length - 1);
                             }
                             obj[key] = value;
                           }
-                        } else if (idx === len - 1) {
-                          item = str.slice(0, str.length - 1);
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          if (value[value.length - 1] === '"') {
-                            value = value.substring(0, value.length - 1);
-                          }
-                          obj[key] = value;
-                        }
+                        });
+
+                        toSet.push(JSON.parse(JSON.stringify(obj)));
                       });
-
-                      toSet.push(JSON.parse(JSON.stringify(obj)));
-                      /**
-                       * 0 image_att
-                       * 1 image_att2
-                       * 2 pdi_answer_att2
-                       * 3 pdi_att_token
-                       * 4 grid_num
-                       * 5 gt
-                       * 6 prediction
-                       * 7 tokenized
-                       * ~~~
-                       * length-1 tokenized_att
-                       */
-
-                      // tokenized = tokenized.slice(1,tokenized.length-1).replace(/\'/g,'').split(', ');
-                      // console.log(JSON.stringify(tokenized));
-                      // item['tokenized'] = JSON.stringify(tokenized);
-
-                      // let tokenAtt = item['tokenized_att'];
-                      // console.log(tokenAtt.slice(1,tokenAtt.length-1).split(', '));
-                      // item['tokenized_att'] = tokenAtt;
-
-                      // console.log(JSON.parse(JSON.stringify(item)));
-
-                      // console.log(item);
-                      // console.log(typeof item);
-                      // console.log(JSON.parse(item));
-                      // console.log(JSON.parse(JSON.stringify(item)));
-                      // toSet.push(JSON.parse(item));
+                      json["attention"] = toSet;
+                      pdis.push(json);
+                    })
+                    .then(() => {
+                      setData(pdis);
                     });
-                    json["attention"] = toSet;
-                    pdis.push(json);
-                  });
                 };
+
                 await fetchAttention(id, idx);
-                // console.log(pdis);
-                setData(pdis);
               });
           } catch (e) {
             setError(e);
@@ -269,15 +269,13 @@ const Contents = () => {
             }
           }
           setTab(0);
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
         };
         loopFetch(list.length);
       });
   }, []);
-
-  useEffect(() => {
-    // console.log(tab);
-  }, [tab]);
 
   const logout = () => {
     history.push("/");
@@ -331,9 +329,13 @@ const Contents = () => {
     return (
       <Container>
         <Header>
+          <Type>
+            <h2>Test {testType}</h2>
+          </Type>
           <Name>
             <h2>{name} 님</h2>
           </Name>
+
           <Title>
             <h1>AI&AT</h1>
           </Title>
@@ -389,7 +391,16 @@ const Contents = () => {
               attentionLevel="1"
             ></Explainability>
           </ExplainabilityContainer>
-
+          <ModelInfoContainer>
+            <AccuracyInfo accuracy={83.3} />
+            <PredictionInfo
+              pdi={data[tab]}
+              modelPrediction={data[tab]["attention"][0]["prediction"]}
+              classified={data[tab]["gt"]}
+              // confidence={data[tab]['confidence']}
+              confidence={(data[tab]["confidence"] * 100).toFixed(1)}
+            ></PredictionInfo>
+          </ModelInfoContainer>
           {/* <Test callback={loadExcel} /> */}
         </Content>
       </Container>
