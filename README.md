@@ -1,2 +1,3 @@
 ## AI & Art Therapy
-> Web page for user study 
+> Web front-end for user study
+> 
