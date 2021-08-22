@@ -47,10 +47,14 @@ const Header = styled.div`
 // lightgray : #e6e9ed;
 //
 const Name = styled.div`
-  margin-left: 30px;
+  position: absolute;
+  margin-left: 150px;
+  width: 100px;
 `;
 
-const Type = styled.div``;
+const Type = styled.div`
+  margin-left: 30px;
+`;
 const Title = styled.div`
   cursor: pointer;
   position: absolute;
@@ -76,9 +80,9 @@ const ExplainabilityContainer = styled.div`
   margin-right: 50px;
 `;
 const ModelInfoContainer = styled.div`
-  // position: fixed;
-  // right: 4%;
-  // top: 200px;
+  position: fixed;
+  right: 10px;
+  top: 200px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -327,12 +331,13 @@ const Contents = () => {
     return (
       <Container>
         <Header>
+          <Type>
+            <h2>Test {testType}</h2>
+          </Type>
           <Name>
             <h2>{name} 님</h2>
           </Name>
-          {/* <Type>
-            <h3>Test {testType}</h3>
-          </Type> */}
+
           <Title>
             <h1>AI&AT</h1>
           </Title>
