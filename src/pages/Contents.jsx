@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
@@ -140,7 +140,7 @@ const Contents = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLoading(true);
     //첫 로딩
     // 1. case 개수 or server id list -> contents컴포넌트
@@ -182,99 +182,75 @@ const Contents = () => {
                    * pdiAttention:[[],[],[],[],[],[],[],[],[]],
                    * pdiAttention2:[]}
                    */
-                  axios.get(`/att/${id}`).then((res) => {
-                    let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
-                    // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
-                    let arr = list.split("},{");
+                  axios
+                    .get(`/att/${id}`)
+                    .then((res) => {
+                      let list = res.data.replaceAll("'", '"').replaceAll("}{", "}},{{");
+                      // list = list.replaceAll("[","\"[").replaceAll("]","]\"")
+                      let arr = list.split("},{");
 
-                    const tmp = arr.map((item) => {
-                      //attention parsing
-                      let tokenized = "";
-                      let obj = {};
-                      let len = item.split('", ').length;
-                      item.split('", ').map((str, idx) => {
-                        let item;
-                        let key;
-                        let value;
-                        if (idx === 0) {
-                          item = str.slice(1, str.length);
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          obj[key] = value;
-                        } else if (idx < 7 && idx > 0) {
-                          item = str;
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          obj[key] = value;
-                        } else if (idx >= 7 && idx < len - 1) {
-                          if (idx === len - 2) tokenized += str;
-                          else tokenized += str + '", ';
-
-                          if (idx === len - 2) {
-                            key = tokenized.split(": ")[0];
+                      const tmp = arr.map((item) => {
+                        //attention parsing
+                        let tokenized = "";
+                        let obj = {};
+                        let len = item.split('", ').length;
+                        item.split('", ').map((str, idx) => {
+                          let item;
+                          let key;
+                          let value;
+                          if (idx === 0) {
+                            item = str.slice(1, str.length);
+                            key = item.split(": ")[0];
                             key = key.replaceAll(/\"/g, "");
-                            value = tokenized.split(": ")[1];
+                            value = item.split(": ")[1];
                             value = value.replace(/"/, "");
-                            value = value.replace(/\",\"/, "");
+                            obj[key] = value;
+                          } else if (idx < 7 && idx > 0) {
+                            item = str;
+                            key = item.split(": ")[0];
+                            key = key.replaceAll(/\"/g, "");
+                            value = item.split(": ")[1];
+                            value = value.replace(/"/, "");
+                            obj[key] = value;
+                          } else if (idx >= 7 && idx < len - 1) {
+                            if (idx === len - 2) tokenized += str;
+                            else tokenized += str + '", ';
+
+                            if (idx === len - 2) {
+                              key = tokenized.split(": ")[0];
+                              key = key.replaceAll(/\"/g, "");
+                              value = tokenized.split(": ")[1];
+                              value = value.replace(/"/, "");
+                              value = value.replace(/\",\"/, "");
+                              if (value[value.length - 1] === '"') {
+                                value = value.substring(0, value.length - 1);
+                              }
+                              obj[key] = value;
+                            }
+                          } else if (idx === len - 1) {
+                            item = str.slice(0, str.length - 1);
+                            key = item.split(": ")[0];
+                            key = key.replaceAll(/\"/g, "");
+                            value = item.split(": ")[1];
+                            value = value.replace(/"/, "");
                             if (value[value.length - 1] === '"') {
                               value = value.substring(0, value.length - 1);
                             }
                             obj[key] = value;
                           }
-                        } else if (idx === len - 1) {
-                          item = str.slice(0, str.length - 1);
-                          key = item.split(": ")[0];
-                          key = key.replaceAll(/\"/g, "");
-                          value = item.split(": ")[1];
-                          value = value.replace(/"/, "");
-                          if (value[value.length - 1] === '"') {
-                            value = value.substring(0, value.length - 1);
-                          }
-                          obj[key] = value;
-                        }
+                        });
+
+                        toSet.push(JSON.parse(JSON.stringify(obj)));
                       });
-
-                      toSet.push(JSON.parse(JSON.stringify(obj)));
-                      /**
-                       * 0 image_att
-                       * 1 image_att2
-                       * 2 pdi_answer_att2
-                       * 3 pdi_att_token
-                       * 4 grid_num
-                       * 5 gt
-                       * 6 prediction
-                       * 7 tokenized
-                       * ~~~
-                       * length-1 tokenized_att
-                       */
-
-                      // tokenized = tokenized.slice(1,tokenized.length-1).replace(/\'/g,'').split(', ');
-                      // console.log(JSON.stringify(tokenized));
-                      // item['tokenized'] = JSON.stringify(tokenized);
-
-                      // let tokenAtt = item['tokenized_att'];
-                      // console.log(tokenAtt.slice(1,tokenAtt.length-1).split(', '));
-                      // item['tokenized_att'] = tokenAtt;
-
-                      // console.log(JSON.parse(JSON.stringify(item)));
-
-                      // console.log(item);
-                      // console.log(typeof item);
-                      // console.log(JSON.parse(item));
-                      // console.log(JSON.parse(JSON.stringify(item)));
-                      // toSet.push(JSON.parse(item));
+                      json["attention"] = toSet;
+                      pdis.push(json);
+                    })
+                    .then(() => {
+                      setData(pdis);
                     });
-                    json["attention"] = toSet;
-                    pdis.push(json);
-                  });
                 };
+
                 await fetchAttention(id, idx);
-                // console.log(pdis);
-                setData(pdis);
               });
           } catch (e) {
             setError(e);
@@ -291,15 +267,13 @@ const Contents = () => {
             }
           }
           setTab(0);
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
         };
         loopFetch(list.length);
       });
   }, []);
-
-  useEffect(() => {
-    // console.log(tab);
-  }, [tab]);
 
   const logout = () => {
     history.push("/");
@@ -415,11 +389,13 @@ const Contents = () => {
             ></Explainability>
           </ExplainabilityContainer>
           <ModelInfoContainer>
-            <AccuracyInfo accuracy={80.6} />
+            <AccuracyInfo accuracy={83.3} />
             <PredictionInfo
               pdi={data[tab]}
               modelPrediction={data[tab]["attention"][0]["prediction"]}
               classified={data[tab]["gt"]}
+              // confidence={data[tab]['confidence']}
+              confidence={68}
             ></PredictionInfo>
           </ModelInfoContainer>
           {/* <Test callback={loadExcel} /> */}

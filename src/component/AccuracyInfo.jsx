@@ -32,7 +32,7 @@ const AccuracyInfo = ({ accuracy }) => {
         secondColor="#e8e8e8"
         leftLabel=""
         rightLabel=""
-        gaugeValue={80.3}
+        gaugeValue={accuracy}
       />
       <p style={{ textAlign: "left" }}>
         <h4>AI의 정확도란?</h4>

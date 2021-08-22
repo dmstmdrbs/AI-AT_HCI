@@ -17,7 +17,7 @@ const Prediction = styled.div`
 const PredictionText = styled.span`
   font-size: 1.2rem;
 `;
-const PredictionInfo = ({ pdi, modelPrediction, classified }) => {
+const PredictionInfo = ({ pdi, modelPrediction, classified, confidence }) => {
   // console.log(pdi["id"]);
   return (
     <Container>
@@ -28,7 +28,7 @@ const PredictionInfo = ({ pdi, modelPrediction, classified }) => {
         secondColor="#e8e8e8"
         leftLabel="Low Confidence"
         rightLabel="High Confidence"
-        gaugeValue={70}
+        gaugeValue={confidence}
       />
       <Prediction>
         {modelPrediction === "no_stress" ? (

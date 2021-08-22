@@ -9,7 +9,7 @@ const Container = styled.div`
   display: flex;
   position: relative;
   box-shadow: 1px 1px 2px 1px #dadce0;
-  max-width: 700px;
+  max-width: 750px;
 `;
 const PdiList = styled.ul`
   list-style: none;
@@ -27,7 +27,8 @@ const ListItem = styled.button`
   min-width: ;
   text-align: start;
   background-color: ${(props) => (props.clicked === props.idx ? "#d1d1d1" : "#ffffff")};
-  cursor: ${(props) => (props.attentionLevel === "1" ? (props.idx >= 2 ? "pointer" : "") : "")};
+  cursor: ${(props) =>
+    props.attentionLevel === "1" && props.valid ? (props.idx >= 2 ? "pointer" : "") : ""};
 `;
 
 // const Button = styled.button`
@@ -81,15 +82,14 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
       setToken(arr);
       // console.log(level1Ref);
     }
-    if (attentionLevel === "2") {
-      let arr = attention[8]["pdi_answer_att2"]
-        .slice(1, attention[8]["pdi_answer_att2"].length - 1)
-        .split(", ");
-      arr = arr.map((strNum) => Number(strNum));
-      setTimeout(() => {
-        setAtt2(arr);
-      }, 100);
-    }
+
+    let arr = attention[8]["pdi_answer_att2"]
+      .slice(1, attention[8]["pdi_answer_att2"].length - 1)
+      .split(", ");
+    arr = arr.map((strNum) => Number(strNum));
+    setTimeout(() => {
+      setAtt2(arr);
+    }, 100);
 
     setClicked(null);
     const parseQuestion = (pdi) => {
@@ -109,18 +109,6 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
 
   useEffect(() => {
     callback(clicked);
-    /*  if(attentionLevel==='1'&&attention){
-        console.log(attention[clicked-2]);
-        let parsed = attention[clicked-2]['tokenized'].replace(/\",\",/gi, "");
-        parsed = parsed.replace(/, ,/g,', ');
-        console.log(JSON.parse(parsed));
-        setToken(JSON.parse(parsed));
-        var temp=attention[clicked-2]['tokenized_att'].slice(1,attention[clicked-2]['tokenized_att'].length-1).split(', ')
-        temp = temp.map(item=>Number(item));
-        setTokenWeight(temp);
-        console.log(parsed);  
-    }
-    */
   }, [clicked]);
 
   const onClickHighlight = () => {
@@ -129,17 +117,15 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
 
   return (
     <Container>
-      {/* <Button onClick={onClickHighlight}>{highlight===false ? 'Highlight':'Show Original'}</Button> */}
       {attentionLevel === "1" && level1Ref && (
         <TokenContainer>
           {token &&
             clicked >= 2 &&
             token[clicked - 2]["tokenized"].map((item, idx) => {
-              // console.log(item,idx)
               return (
                 <>
                   <TokenText ref={level1Ref[idx]}>
-                    [{(token[clicked - 2]["tokenizedWeight"][idx] * 100).toFixed(1)}%] {item}
+                    {`[ ${(token[clicked - 2]["tokenizedWeight"][idx] * 100).toFixed(1)}% ]`} {item}
                   </TokenText>
                 </>
               );
@@ -156,40 +142,37 @@ const PdiResult = ({ pdi, pdiIdx, callback, attention, attentionLevel, level1Ref
               primary={`${item} - ${pdi[item]}`}
               clicked={clicked}
               idx={idx}
+              valid={
+                testType === "B"
+                  ? true
+                  : testType === "A" && att2[idx - 2] * 100 < 12.5
+                  ? false
+                  : true
+              }
               attentionLevel={attentionLevel}
               onClick={() => {
                 //TODO : testType === 'A' ? 0 : 클릭 무반응, 1: 기존처럼 클릭
                 //if (attentionLevel === "1") clicked === idx ? setClicked(null) : (testType==='A' ? setClicked(null) : setClicked(idx);
 
                 if (attentionLevel === "1" && idx >= 2)
-                  clicked === idx ? setClicked(null) : setClicked(idx);
+                  if (testType === "A" && att2[idx - 2] * 100 < 12.5) {
+                    console.log("none");
+                  } else {
+                    clicked === idx ? setClicked(null) : setClicked(idx);
+                  }
               }}
             >
               {idx >= 2 ? (
                 <>
-                  {attentionLevel === "2" && att2 ? (
-                    idx - 2 ===
-                    att2.indexOf(
-                      att2.reduce((maxValue, currentValue) =>
-                        maxValue > currentValue ? maxValue : currentValue,
-                      ),
-                    ) ? (
-                      <span id="highlight2" style={{ fontSize: "1rem" }}>
-                        [weight :{" "}
-                        <span style={{ fontSize: "1rem", color: "#f05650" }}>
-                          {(att2[idx - 2] * 100).toFixed(1)}%
-                        </span>
-                        ]
-                      </span>
-                    ) : (
-                      <span id="highlight2" style={{ fontSize: "1rem" }}>
-                        [weight : {(att2[idx - 2] * 100).toFixed(1)}%]{" "}
-                      </span>
-                    )
+                  {attentionLevel === "1" && att2 ? (
+                    <span style={{ fontSize: "1rem" }}>{`[${(att2[idx - 2] * 100).toFixed(
+                      1,
+                    )}%]`}</span>
                   ) : (
-                    <span></span>
+                    <></>
                   )}
-                  <span style={{ fontSize: "1rem" }}>{`${item} - `}</span>
+
+                  <span style={{ fontSize: 16 }}> {item} - </span>
                   <MyHiglighter
                     attentionLevel={attentionLevel}
                     sentence={`${pdi[item]}`}

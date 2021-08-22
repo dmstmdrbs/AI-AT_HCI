@@ -5,7 +5,7 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
 am4core.useTheme(am4themes_animated);
 
-const ModelAccuracy = () => {
+const ModelAccuracy = ({ accuracy }) => {
   const chart = useRef(null);
 
   useLayoutEffect(() => {
@@ -16,12 +16,12 @@ const ModelAccuracy = () => {
     x.data = [
       {
         confidence: "",
-        value: 81,
+        value: parseInt(accuracy), //모델의 정확도
         color: am4core.color("#24fd77"),
       },
       {
         confidence: "",
-        value: 19,
+        value: 100 - parseInt(accuracy),
         color: am4core.color("#b1b1b1"),
       },
     ];
